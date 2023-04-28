@@ -96,4 +96,7 @@ const UserSchema = new Schema({
   }
 });
 
+UserSchema.index({ privateProfile: 1, 'posts.timestamp': -1 });
+
+
 module.exports = mongoose.model('User', UserSchema);

@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title Admin Login
+  body
+    h1 Admin Login
+    form(action='/admin', method='POST')
+      label(for='username') Username:
+      input(type='text', name='username')
+      label(for='password') Password:
+      input(type='password', name='password')
+      input(type='submit', value='Login')
+    if message
+      p(style='color: red;') #{message}
+    if loggedIn
+      h2 Admin Dashboard
+      p Welcome, #{username}!
+      button(onclick="getResource()") Update mongoDB Indexes
+      script.
+        function getResource() {
+        // send a GET request to the "/getResource" endpoint
+        fetch('/admin/updateIndex')
+          .then(response => response.json())
+          .then(data => console.log(data))
+          .catch(error => console.error(error));
+        }

@@ -40,4 +40,7 @@ PostSchema.pre("save", function (next) {
   next();
 });
 
+PostSchema.index({ timestamp: -1 });
+
+
 module.exports = mongoose.model("Post", PostSchema);
