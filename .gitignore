@@ -1,5 +1,9 @@
 #dependencies
 /node_modules
 
+#client
+/finalproject_client
+
+
 #misc
 *.env
