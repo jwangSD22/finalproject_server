@@ -26,9 +26,19 @@ const ImageSchema = new Schema({
       type: [String],
       index: true
     },
-    comments: {
-      type: [String]
-    },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message',
+        required: true
+      }
+    ],
+
+    numberOfComments:{
+      type: Number
+    }
+    ,
+    
     timestamp: {
       type: Date,
       default: Date.now

@@ -39,6 +39,9 @@ router.get('/updateIndex',async (req,res,next)=>{
 
   console.log('created indexes')
 
+
+  
+
   res.send('Created Indexes in MongoDB')
 
 
