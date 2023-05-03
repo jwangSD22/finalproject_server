@@ -2,6 +2,13 @@ const User = require('../models/user')
 const { body, validationResult } = require('express-validator');
 const AWS = require('aws-sdk');
 const sharp = require('sharp')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const jwtSecret = process.env.JWT_SECRET
+
+
+
+
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -9,20 +16,27 @@ const s3 = new AWS.S3({
     region: process.env.AWS_REGION
 });
 
-// Example: list all objects in a bucket
-const params = {
-  Bucket: process.env.BUCKET_NAME,
-};
 
-// s3.listObjects(params, function(err, data) {
-//   if (err) {
-//     console.log(err, err.stack);
-//   } else {
-//     console.log(data);
-//   }
-// });
+exports.login = async function (req,res,next){
 
+  try{
+    const {email,password} = req.body
 
+    const findUser = await User.findOne({email:email})
+    
+    
+    const user = {username:findUser.username, email: findUser.email, id:findUser.id}
+    const token = jwt.sign(user,jwtSecret,{expiresIn: '3h'})
+    console.log(user.id)
+    
+    return res.status(200).json({ token , success: 'User Logged-in', ...user})
+  }
+
+  catch(err){
+    console.log(err)
+  }
+
+}
 
 
 exports.create_user = [
@@ -34,28 +48,53 @@ exports.create_user = [
     body('aboutMe').trim().isLength({ max: 500 }),
   
     async (req, res, next) => {
+      //handle errors from express-valdiator
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         console.log(errors)
         return res.status(400).json({ errors: errors.array() });
       }
-      try {
+      
+      //try submission of new user 
+      try {    
+          const newUser = new User ({
+            fullName:req.body.fullName,
+            username:req.body.username,
+            password:await hashPassword(req.body.password),
+            email:req.body.email,
+            dateOfBirth:req.body.dateOfBirth
+          })
+  
+            await newUser.save()
+            
+            //if successful return status 200
+            const user = {userid:req.body.username, email: req.body.email}
+            const token = jwt.sign(user,jwtSecret,{expiresIn: '3h'})
 
-        //submit into database -- check for errors 
-        //hash password
-        //check if there's an image -- if there is, submit image and create URL 
+            return res.status(200).json({ token, success: 'User Created'})
 
-
-
-
-
-
-
-    } catch (err) {
-        return next(err);
+    } 
+    
+    //catch error from password hashing or saving new user
+    catch (err) {
+      if (err.code === 11000) {
+        // Duplicate username error
+        console.log('duplicate user name!')
+        return res.status(409).json({ error: 'Username already taken' });
+      } else {
+        // Other error
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
       }
     }
+    }
   ];
+
+  //accessory function to use bcrypt to hash password
+async function hashPassword(password) {
+  const hashedPassword = await bcrypt.hash(password,10)
+  return hashedPassword
+}
   
 
 exports.create_user_profile_photo = async function (req,res,next){
@@ -78,13 +117,19 @@ exports.create_user_profile_photo = async function (req,res,next){
             Body: resizedImageBuffer,
             ContentType: file.mimetype,
           }).promise();
-      
-          // Generate the public URL for the uploaded image
-          const imageUrl = `https://${bucketName}.s3.amazonaws.com/${objectKey}`;
-      
-          // Return the URL in the response
-          console.log(imageUrl)
-          res.status(200).json({ imageUrl });
+
+          // test code to see if i can pull back the URL from the newly created object
+          const params = {
+            Bucket: bucketName,
+            Key: objectKey,
+            Expires:3600
+          }
+          const url = s3.getSignedUrl('getObject',params)
+          console.log(url)
+
+
+          res.status(200).json({ objectKey });
+
         } catch (err) {
           console.error(err);
           res.status(500).json({ error: 'Error uploading profile photo' });

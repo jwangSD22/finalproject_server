@@ -18,6 +18,9 @@ router.get('/', function(req, res, next) {
 
 //<-----------------USER ROUTES----------------->//
 
+//POST login a user
+router.post('/users/login',user_controller.login)
+
 //POST create a new user
 router.post('/users',user_controller.create_user)
 
