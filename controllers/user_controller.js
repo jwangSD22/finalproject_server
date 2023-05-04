@@ -138,9 +138,28 @@ exports.create_user_profile_photo = async function (req,res,next){
 
 
 
-exports.get_users
+exports.get_allusers = function (req,res,next) { 
+  User.find()
+  .exec()
+  .then(
+      result => {
+          res.json(result)
+      }
+  )
+  }
 
-exports.get_user
+
+exports.get_user = function(req,res,next){
+  User.findOne({username:req.body.username})
+  .exec()
+  .then(
+    result => {
+      res.json(result)
+    }
+  )
+
+}
+  
 
 exports.update_user 
 

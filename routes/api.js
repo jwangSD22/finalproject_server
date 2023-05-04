@@ -9,6 +9,22 @@ const multer = require('multer')
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
+const jwt = require('jsonwebtoken');
+
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Missing token' });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    req.user = decoded;
+    next();
+  });
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -28,7 +44,7 @@ router.post('/users',user_controller.create_user)
 router.post('/users/imageUpload',upload.single('profilePhoto'),user_controller.create_user_profile_photo)
 
 //GET a list of all users in DB
-router.get('/users')
+router.get('/users', verifyToken, user_controller.get_allusers)
 
 //GET info for a specific user by USER ID
 router.get('/users/:id')
