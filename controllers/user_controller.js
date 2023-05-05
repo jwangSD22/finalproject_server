@@ -22,14 +22,26 @@ exports.login = async function (req,res,next){
   try{
     const {email,password} = req.body
 
-    const findUser = await User.findOne({email:email})
+    const thisUser = await User.findOne({email:email})
     
-    
-    const user = {username:findUser.username, email: findUser.email, id:findUser.id}
-    const token = jwt.sign(user,jwtSecret,{expiresIn: '3h'})
-    console.log(user.id)
-    
-    return res.status(200).json({ token , success: 'User Logged-in', ...user})
+    bcrypt.compare(password,thisUser.password,(err,result)=>{
+      if(err){
+          //handle err
+          console.log(err)
+      }
+      else if(result){
+        console.log('passwords match')
+        const user = {username:thisUser.username, email: thisUser.email, id:thisUser.id}
+        const token = jwt.sign(user,jwtSecret,{expiresIn: '3h'})
+        return res.status(200).json({ token , success: 'User Logged-in', ...user})
+      }
+      else{
+        console.log('passwords do not match')
+        console.log(result)
+        return res.status(401).json({error:'failed'})
+      }
+    })
+   
   }
 
   catch(err){
