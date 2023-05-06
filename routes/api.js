@@ -37,95 +37,101 @@ router.get('/', function(req, res, next) {
 //POST login a user
 router.post('/users/login',user_controller.login)
 
+//POST logout a user
+router.post('/users/logout', user_controller.logout)
+
 //POST create a new user
 router.post('/users',user_controller.create_user)
 
 //POST handle image submission for profile photo
 router.post('/users/imageUpload',upload.single('profilePhoto'),user_controller.create_user_profile_photo)
 
+//GET check login status
+router.get('/users/loginstatus',verifyToken,user_controller.loginstatus)
+
 //GET a list of all users in DB
 router.get('/users', verifyToken, user_controller.get_allusers)
 
 //GET info for a specific user by USER ID
-router.get('/users/:id')
+router.get('/users/:username',verifyToken, user_controller.get_user )
 
 //PUT update a user's information
-router.put('/users/:id')
+router.put('/users/:username',verifyToken, user_controller.update_user )
 
 //DELETE delete a user's account (NOT IMPLEMENTING AT CURRENT TIME)
 
 //<-----------------POST ROUTES----------------->//
 
 // POST create a new post 
-router.post('/posts',)
+router.post('/posts',verifyToken)
 
 //POST handle image submission to a specific post by POST ID
-router.post('/posts/:id/image')
+router.post('/posts/:id/image',verifyToken)
 
 // GET all public posts to display on main page
-router.get('/posts',);
+router.get('/posts',verifyToken);
 
 // GET specific post information by POST ID
-router.get('/posts/:id')
+router.get('/posts/:id',verifyToken)
 
 // GET all posts from a specific USER ID
-router.get('/posts/user/:id')
+router.get('/posts/user/:id',verifyToken)
 
 // PUT update a post by POST ID
-router.put('/posts/:id') 
+router.put('/posts/:id',verifyToken) 
 
 //PUT update a post and its comment number by POST ID
-router.put('/posts/:id/comment_number')
+router.put('/posts/:id/comment_number',verifyToken)
 
 //PUT update a post by adding a **LIKE**
-router.put('/posts/:id/like')
+router.put('/posts/:id/like',verifyToken)
 
 // DELETE delete a post by POST ID
-router.delete('/posts/:id')
+router.delete('/posts/:id',verifyToken)
 
 //<-----------------CHAT ROUTES----------------->//
 
 //POST create a new chat between two users
-router.post('/chats')
+router.post('/chats',verifyToken)
 
 //GET chats for a specific user by USER ID
-router.get('/chats/user/:id')
+router.get('/chats/user/:id',verifyToken)
 
 //GET start a socket.io session for a specific chat by CHAT ID
-router.get('/chats/:id')
+router.get('/chats/:id',verifyToken)
 
 //PUT update a specific chat's preview message by getting the first message by CHAT ID
-router.put('/chats/:id/preview')
+router.put('/chats/:id/preview',verifyToken)
 
 //DELETE delete a chat session from a user's list by USER ID
-router.delete('/chats/user/:id')
+router.delete('/chats/user/:id',verifyToken)
 
 
 //<-----------------MESSAGE/COMMENT ROUTES----------------->//
 
 //POST create a new COMMENT for a specific post by POST ID
-router.post('/posts/:id/newcomment')
+router.post('/posts/:id/newcomment',verifyToken)
 
 //POST create a new MESSAGE for a specific chat by CHAT ID
-router.post('/chats/:id/newmessage')
+router.post('/chats/:id/newmessage',verifyToken)
 
 //GET ALL COMMENTS for a specific post by POST ID
-router.get('/posts/:id/comments')
+router.get('/posts/:id/comments',verifyToken)
 
 //GET ALL MESSAGES for a specific chat by CHAT ID
-router.get('/chats/:id/messages')
+router.get('/chats/:id/messages',verifyToken)
 
 //PUT update a COMMENT by MESSAGE ID to add **LIKES**
-router.put('/comments/:id/addlike')
+router.put('/comments/:id/addlike',verifyToken)
 
 //PUT update a MESSAGE for a specific CHAT ID with a new IMAGE
-router.put('/messages/:id/addimage')
+router.put('/messages/:id/addimage',verifyToken)
 
 //DELETE comment on a post by COMMENT ID and update POST
-router.delete('/comments/:id/delete')
+router.delete('/comments/:id/delete',verifyToken)
 
 //DELETE message in a chat by MESSAGE ID and update CHAT
-router.delete('/messages/:id/delete')
+router.delete('/messages/:id/delete',verifyToken)
 
 
 module.exports = router;
