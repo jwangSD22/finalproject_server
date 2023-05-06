@@ -63,7 +63,7 @@ router.put('/users/:username',verifyToken, user_controller.update_user )
 //<-----------------POST ROUTES----------------->//
 
 // POST create a new post 
-router.post('/posts',verifyToken)
+router.post('/posts',verifyToken,post_controller.create_post)
 
 //POST handle image submission to a specific post by POST ID
 router.post('/posts/:id/image',verifyToken)
