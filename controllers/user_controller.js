@@ -5,8 +5,7 @@ const sharp = require("sharp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.JWT_SECRET;
-const s3 = require("./s3instance")
-
+const s3 = require("./s3instance");
 
 exports.login = async function (req, res, next) {
   try {
@@ -164,8 +163,8 @@ exports.get_user = async function (req, res, next) {
     const bucketName = process.env.BUCKET_NAME;
     let thisUser = await User.findOne({ username: username });
 
-    if(thisUser===null){
-      return res.status(404).json({message:'User does not exist'})
+    if (thisUser === null) {
+      return res.status(404).json({ message: "User does not exist" });
     }
     if (thisUser.profilePhoto) {
       const params = {
@@ -179,7 +178,7 @@ exports.get_user = async function (req, res, next) {
       res.json({ ...thisUser.toObject() });
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

@@ -44,7 +44,7 @@ router.post('/users/logout', user_controller.logout)
 router.post('/users',user_controller.create_user)
 
 //POST handle image submission for profile photo
-router.post('/users/imageUpload',upload.single('profilePhoto'),user_controller.create_user_profile_photo)
+router.post('/users/imageUpload',verifyToken,upload.single('profilePhoto'),user_controller.create_user_profile_photo)
 
 //GET check login status
 router.get('/users/loginstatus',verifyToken,user_controller.loginstatus)
@@ -66,7 +66,7 @@ router.put('/users/:username',verifyToken, user_controller.update_user )
 router.post('/posts',verifyToken,post_controller.create_post)
 
 //POST handle image submission to a specific post by POST ID
-router.post('/posts/:id/image',verifyToken)
+router.post('/posts/imageupload',verifyToken,upload.array('files'), post_controller.handle_image_upload)
 
 // GET all public posts to display on main page
 router.get('/posts',verifyToken);
