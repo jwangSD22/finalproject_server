@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const s3 = require('../controllers/s3instance');
+
 
 const ImageSchema = new Schema({
   s3key: {
@@ -95,6 +97,20 @@ const UserSchema = new Schema({
     default: false
   }
 });
+
+UserSchema.virtual('imageURLs').get(async function() {
+  const imgKey = this.profilePhoto
+
+    const params = {
+      Bucket: bucketName,
+      Key:imgKey.s3key,
+      Expires:3600,
+    }
+    const url = s3.getSignedUrl('getObject',params)
+
+
+  return url
+})
 
 UserSchema.index({ privateProfile: 1, 'posts.timestamp': -1 });
 
