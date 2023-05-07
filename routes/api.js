@@ -72,7 +72,7 @@ router.post('/posts/imageupload',verifyToken,upload.array('files'), post_control
 router.get('/posts',verifyToken);
 
 // GET specific post information by POST ID
-router.get('/posts/:id',verifyToken)
+router.get('/posts/:id',verifyToken,post_controller.get_post)
 
 // GET all posts from a specific USER ID
 router.get('/posts/user/:id',verifyToken)

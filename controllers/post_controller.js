@@ -84,7 +84,15 @@ exports.handle_image_upload = async function (req, res, next) {
 exports.get_all_posts;
 
 // GET specific post information by POST ID
-exports.get_post;
+exports.get_post = async function (req,res,next) {
+    let id = req.params.id
+
+    const post = await Post.findOne({_id:id})
+    const imageURLs = await post.imageURLs
+
+
+    res.json(imageURLs)
+}
 
 // GET all posts from a specific USER ID
 exports.get_user_posts;
@@ -102,11 +110,3 @@ exports.delete_post;
 
 
 
-   // test code to see if i can pull back the URL from the newly created object
-    // const params = {
-    //   Bucket: bucketName,
-    //   Key: objectKey,
-    //   Expires: 3600,
-    // };
-    // const url = s3.getSignedUrl("getObject", params);
-    // console.log(url);
