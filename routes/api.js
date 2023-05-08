@@ -69,7 +69,7 @@ router.post('/posts',verifyToken,post_controller.create_post)
 router.post('/posts/imageupload',verifyToken,upload.array('files'), post_controller.handle_image_upload)
 
 // GET all public posts to display on main page
-router.get('/posts',verifyToken,get_all_posts);
+router.get('/posts',verifyToken,post_controller.get_all_posts);
 
 // GET specific post information by POST ID
 router.get('/posts/:id',verifyToken,post_controller.get_post)

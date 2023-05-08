@@ -86,7 +86,7 @@ exports.create_user = [
 
       /* ADD LOGIC TO LOG IN USER AFTER CREATING THE ACCOUNT??? OR REDIRECT AND FORCE LOGIN */
 
-      return res.status(200).json({ token, success: "User Created" });
+      return res.status(200).json({ success: "User Created" });
     } catch (err) {
       //catch error from password hashing or saving new user
       if (err.code === 11000) {

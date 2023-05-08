@@ -124,7 +124,9 @@ exports.get_post = async function (req,res,next) {
     //this is a mongoose virtual off post model to get signed URLs from keys within POST
     const imageURLs = await post.imageURLs
     const topCommentsSnippet = await post.topCommentsSnippet
-    res.json({...post.toObject(),imageUrls,topCommentsSnippet})
+    const postImageAndComments = {...post.toObject(),imageURLs,topCommentsSnippet}
+    
+    res.json(postImageAndComments)
 
 }
 
