@@ -69,22 +69,23 @@ router.post('/posts',verifyToken,post_controller.create_post)
 router.post('/posts/imageupload',verifyToken,upload.array('files'), post_controller.handle_image_upload)
 
 // GET all public posts to display on main page
-router.get('/posts',verifyToken);
+router.get('/posts',verifyToken,get_all_posts);
 
 // GET specific post information by POST ID
 router.get('/posts/:id',verifyToken,post_controller.get_post)
 
-// GET all posts from a specific USER ID
-router.get('/posts/user/:id',verifyToken)
+// GET all posts from a specific USERNAME
+router.get('/posts/user/:username',verifyToken,post_controller.get_user_posts)
 
 // PUT update a post by POST ID
 router.put('/posts/:id',verifyToken) 
 
-//PUT update a post and its comment number by POST ID
-router.put('/posts/:id/comment_number',verifyToken)
-
 //PUT update a post by adding a **LIKE**
-router.put('/posts/:id/like',verifyToken)
+router.put('/posts/:id/addlike',verifyToken,post_controller.post_add_like)
+
+//PUT update a post by removing a **LIKE**
+router.put('/posts/:id/removelike',verifyToken,post_controller.post_remove_like)
+
 
 // DELETE delete a post by POST ID
 router.delete('/posts/:id',verifyToken)
