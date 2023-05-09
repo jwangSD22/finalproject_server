@@ -20,6 +20,7 @@ exports.create_post = async function (req, res, next) {
     postMessage: req.body.postMessage,
     timestamp: new Date()
   };
+  
   //check if req.body contains an array of image URLs
   let arrayToUpload = [];
   if (req.body.imageKeyArray) {
@@ -118,16 +119,24 @@ exports.get_all_posts = async function (req,res,next) {
 
 
 
+
+
+
+
 // GET specific post information by POST ID
 exports.get_post = async function (req,res,next) {
+  try{
     let id = req.params.id
     const post = await Post.findOne({_id:id})
     //this is a mongoose virtual off post model to get signed URLs from keys within POST
     const imageURLs = await post.imageURLs
-    const topCommentsSnippet = await post.topCommentsSnippet
+    const topCommentsSnippet = post.comments.length>0?await post.topCommentsSnippet:null
     const postImageAndComments = {...post.toObject(),imageURLs,topCommentsSnippet}
-
     res.json(postImageAndComments)
+  }
+  catch(err){
+    res.status(400).json({error:err})
+  }
 
 }
 
@@ -139,7 +148,7 @@ exports.get_user_posts = async function (req,res,next) {
   const postsWithImageUrlsAndComments = await Promise.all(
     posts.map(async (post) => {
       const imageURLs = await post.imageURLs;
-      const topCommentsSnippet = await post.topCommentsSnippet
+      const topCommentsSnippet = post.numberOfComments>0??await post.topCommentsSnippet
       return { ...post.toObject(), imageURLs,topCommentsSnippet };
     })
   );

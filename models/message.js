@@ -10,7 +10,7 @@ const ImageSchema = new Schema({
 
 const MessageSchema = new Schema({
   author: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },

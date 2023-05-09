@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const s3 = require('../controllers/s3instance');
 const bucketName = process.env.BUCKET_NAME;
+const User = require('../models/user')
+const Message = require('../models/message')
+const Post = require('../models/post')
 
 
 const ImageSchema = new Schema({
@@ -71,16 +74,30 @@ PostSchema.virtual('likesFullNames').get(
 )
 
 PostSchema.virtual('topCommentsSnippet').get(async function () {
-  const comments = this.comments.slice(0, 3);
-  const commentData = await Promise.all(comments.map(async comment => {
-    const author = await User.findOne({ username: comment.author });
-    return {
-      message: comment.message.slice(0, 25),
-      author: author.fullName
-    };
-  }));
-  return commentData;
+  try {
+    if (this.numberOfComments > 0) {
+      const comments = this.comments.slice(0, 3);
+      const commentData = await Promise.all(comments.map(async commentId => {
+        const comment = await Message.findById(commentId).populate('author');
+        
+        return {
+          message: comment.message.slice(0, 25),
+          author: comment.author.fullName
+        };
+      }));
+
+      return commentData;
+
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.log(err);
+    throw new Error('Error retrieving top comments');
+  }
 });
+
+
 
 PostSchema.virtual('imageURLs').get(async function() {
   const imgKeys = this.images
