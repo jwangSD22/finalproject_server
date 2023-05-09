@@ -111,7 +111,7 @@ router.delete('/chats/user/:id',verifyToken)
 //<-----------------MESSAGE/COMMENT ROUTES----------------->//
 
 //POST create a new COMMENT for a specific post by POST ID
-router.post('/posts/:id/newcomment',verifyToken)
+router.post('/posts/:id/newcomment',verifyToken,message_controller.post_comment)
 
 //POST create a new MESSAGE for a specific chat by CHAT ID
 router.post('/chats/:id/newmessage',verifyToken)

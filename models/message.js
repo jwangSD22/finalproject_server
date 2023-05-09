@@ -38,8 +38,6 @@ const MessageSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Chat'
   }
-
-
 });
 
 MessageSchema.pre("save", function (next) {

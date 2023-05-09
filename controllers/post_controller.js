@@ -18,6 +18,7 @@ exports.create_post = async function (req, res, next) {
   let postContent = {
     author: jwtusername,
     postMessage: req.body.postMessage,
+    timestamp: new Date()
   };
   //check if req.body contains an array of image URLs
   let arrayToUpload = [];
@@ -37,7 +38,7 @@ exports.create_post = async function (req, res, next) {
   author.posts.push(newPost);
   author.save();
 
-  res.send("ok");
+  res.send(newPost);
 };
 
 //POST handle image submission to a specific post by POST ID
@@ -87,7 +88,7 @@ exports.get_all_posts = async function (req,res,next) {
   const page = req.query.page || 1; // default to page 1
   const limit = 10; // number of posts to retrieve per page
   const skip = (page - 1) * limit; // number of posts to skip based on current page
-  const posts = await Post.find().skip(skip).limit(limit);
+  const posts = await Post.find().skip(skip).limit(limit).sort({timestamp: -1});
   const postsWithImageUrlsAndComments = await Promise.all(
     posts.map(async (post) => {
       const imageURLs = await post.imageURLs;
@@ -125,7 +126,7 @@ exports.get_post = async function (req,res,next) {
     const imageURLs = await post.imageURLs
     const topCommentsSnippet = await post.topCommentsSnippet
     const postImageAndComments = {...post.toObject(),imageURLs,topCommentsSnippet}
-    
+
     res.json(postImageAndComments)
 
 }
@@ -134,7 +135,7 @@ exports.get_post = async function (req,res,next) {
 exports.get_user_posts = async function (req,res,next) {
   const username = req.params.username
   //would it make more sense to get all the post ids, and the run a command back to my get specific post by ID?
-  const posts = await Post.find({ author: username });
+  const posts = await Post.find({ author: username }).sort({timestamp: -1});
   const postsWithImageUrlsAndComments = await Promise.all(
     posts.map(async (post) => {
       const imageURLs = await post.imageURLs;

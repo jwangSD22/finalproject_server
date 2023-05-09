@@ -54,10 +54,10 @@ const ImageSchema = new Schema({
     }
   });
 
-PostSchema.pre("save", function (next) {
-  this.timestamp = new Date();
-  next();
-});
+// PostSchema.pre("save", function (next) {
+//   this.timestamp = new Date();
+//   next();
+// });
 
 PostSchema.virtual('likesFullNames').get(
   ()=>{
