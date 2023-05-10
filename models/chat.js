@@ -6,7 +6,7 @@ const ChatSchema = new Schema({
       type: String,
       required: true
     },
-    users: [
+    participants: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -19,12 +19,34 @@ const ChatSchema = new Schema({
         ref: 'Message',
         required: true
       }
-    ],
-    preview: {
-      type: String,
-      required: true
-    }
+    ]
   });
   
+  ChatSchema.virtual('preview').get(async function () {
+    try {
+
+  
+
+      if (this.messages.length>0) {
+
+        //THIS IS GRABBING THE LAST MESSAGE IN THE ARRAY... 
+        const previewMessageID = this.messages[this.messages.length-1]
+        const messageData = await Message.findOne(previewMessageID).populate('author')
+
+        return messageData.message.slice(0, 25)
+        
+        }
+      else {
+        return 'No Preview'
+      }    
+            
+          
+         
+      }
+     catch (err) {
+      console.log(err);
+      throw new Error('Error retrieving top comments');
+    }
+  });
 
   module.exports = mongoose.model("Chat", ChatSchema);

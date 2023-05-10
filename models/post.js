@@ -87,8 +87,7 @@ PostSchema.virtual('topCommentsSnippet').get(async function () {
           author: comment.author.fullName
         };
       }));
-      return commentData;
-
+       return commentData;
     }
   } catch (err) {
     console.log(err);

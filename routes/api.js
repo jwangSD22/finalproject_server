@@ -89,14 +89,17 @@ router.delete('/posts/:id',verifyToken)
 
 //<-----------------CHAT ROUTES----------------->//
 
-//POST create a new chat between two users
-router.post('/chats',verifyToken)
+//GET chat between two users & create if doesn't exist
+router.get('/chats/',verifyToken,chat_controller.get_chat)
 
-//GET chats for a specific user by USER ID
-router.get('/chats/user/:id',verifyToken)
+//GET chats for a specific user
+router.get('/chats/user/',verifyToken,chat_controller.get_all_chats)
 
 //GET start a socket.io session for a specific chat by CHAT ID
 router.get('/chats/:id',verifyToken)
+
+//POST logout of a chat
+router.post('/chats/:id',verifyToken)
 
 //PUT update a specific chat's preview message by getting the first message by CHAT ID
 router.put('/chats/:id/preview',verifyToken)

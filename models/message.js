@@ -33,7 +33,7 @@ const MessageSchema = new Schema({
     type: Date,
     default: Date.now,
     required: true
-  }
+  },
 });
 
 MessageSchema.pre("save", function (next) {
