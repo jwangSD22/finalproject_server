@@ -63,13 +63,15 @@ const ImageSchema = new Schema({
 // });
 
 PostSchema.virtual('likesFullNames').get(
-  ()=>{
-    if(this.likes){
-      return this.likes.map(like=like.fullName);
-    }
-    else{
-      return []
-    }
+  async function () {
+
+  let userArray = await this.populate('likes')
+  //execPopulate()??????
+  let fullNameArray = userArray.map(item=>item.fullName)
+
+  return fullNameArray
+
+
   }
 )
 
@@ -85,11 +87,8 @@ PostSchema.virtual('topCommentsSnippet').get(async function () {
           author: comment.author.fullName
         };
       }));
-
       return commentData;
 
-    } else {
-      return [];
     }
   } catch (err) {
     console.log(err);

@@ -118,11 +118,6 @@ exports.get_all_posts = async function (req,res,next) {
 // };
 
 
-
-
-
-
-
 // GET specific post information by POST ID
 exports.get_post = async function (req,res,next) {
   try{
@@ -148,7 +143,7 @@ exports.get_user_posts = async function (req,res,next) {
   const postsWithImageUrlsAndComments = await Promise.all(
     posts.map(async (post) => {
       const imageURLs = await post.imageURLs;
-      const topCommentsSnippet = post.numberOfComments>0??await post.topCommentsSnippet
+      const topCommentsSnippet = await post.topCommentsSnippet
       return { ...post.toObject(), imageURLs,topCommentsSnippet };
     })
   );
@@ -187,7 +182,7 @@ try{
 
 
 
-
+//PUT update a post by removing a **LIKE**
 exports.post_remove_like = async function (req,res,next) { 
   const userId = req.user.jwtid
   const id = req.params.id

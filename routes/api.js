@@ -117,7 +117,7 @@ router.post('/posts/:id/newcomment',verifyToken,message_controller.post_comment)
 router.post('/chats/:id/newmessage',verifyToken)
 
 //GET ALL COMMENTS for a specific post by POST ID
-router.get('/posts/:id/comments',verifyToken)
+router.get('/posts/:id/comments',verifyToken,message_controller.get_all_comments)
 
 //GET ALL MESSAGES for a specific chat by CHAT ID
 router.get('/chats/:id/messages',verifyToken)

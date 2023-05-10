@@ -51,6 +51,20 @@ parentChat -- not a chat
 }
 
 //GET ALL COMMENTS for a specific post by POST ID
+exports.get_all_comments = async function(req,res,next) {
+    const postID = req.params.id
+    const post = await Post.findOne({_id:postID})
+    const commentData = await PromiseAll(post.comments.map(
+        async commentID => {
+            const comment = await Message.findOne({_id:commentID}).populate('author')
+            return {author:comment.author.username,
+                    message:comment.message,
+                    likes:comment.likes
+                }
+        }
+    ))
+
+}
 
 
 

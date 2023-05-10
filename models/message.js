@@ -21,10 +21,10 @@ const MessageSchema = new Schema({
   images: {
     type: [ImageSchema]
   },
-  likes: {
-    type: [String],
-    index: true
-  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   timestamp: {
     type: Date,
     default: Date.now,
