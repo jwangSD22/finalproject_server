@@ -156,54 +156,34 @@ exports.update_post;
 
 //PUT update a post and its comment number by POST ID
 
-//PUT update a post by adding a **LIKE**
+//PUT update a post by TOGGLING **LIKE** status
 // router.put('/posts/:id/like',verifyToken)
-exports.post_add_like = async function (req,res,next) { 
-  const userId = req.user.jwtid
-  const id = req.params.id
-  const post = await Post.findById(id)
-try{
-  if (post.likes.includes(userId)) {
-    return res.status(400).json({ message: "You've already liked this post" });
+exports.post_toggle_like = async function (req, res, next) {
+  const userId = req.user.jwtid;
+  const id = req.params.id;
+  const post = await Post.findById(id);
+
+  try {
+    const index = post.likes.indexOf(userId);
+    if (index > -1) {
+      // User already liked the post, remove the like
+      post.likes.splice(index, 1);
+      post.numberOfLikes--;
+    } else {
+      // User hasn't liked the post yet, add the like
+      post.likes.push(userId);
+      post.numberOfLikes++;
+    }
+
+    // Save the updated post and return the updated document
+    const updatedPost = await post.save();
+
+    return res.json(updatedPost);
+  } catch (error) {
+    res.status(400).json(error);
   }
+};
 
-  // Add the user's id to the likes array and increment the number of likes
-  post.likes.push(userId);
-  post.numberOfLikes++;
-
-  // Save the updated post and return the updated document
-  const updatedPost = await post.save();
-
-  return res.json(updatedPost);
-} catch (error) {
-  res.status(400).json(error);
-}
-}
-
-
-
-//PUT update a post by removing a **LIKE**
-exports.post_remove_like = async function (req,res,next) { 
-  const userId = req.user.jwtid
-  const id = req.params.id
-  const post = await Post.findById(id)
-try{
-  if (!post.likes.includes(userId)) {
-    return res.status(400).json({ message: "You haven't liked this post" });
-  }
-
-    // Remove the user's id from the likes array and decrement the number of likes
-    post.likes.splice(post.likes.indexOf(userId), 1);
-    post.numberOfLikes--;
-
-  // Save the updated post and return the updated document
-  const updatedPost = await post.save();
-
-  return res.json(updatedPost);
-} catch (error) {
-  res.status(400).json(error);
-}
-}
 
 
 

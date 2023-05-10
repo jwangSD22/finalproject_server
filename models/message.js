@@ -25,6 +25,10 @@ const MessageSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  numberOfLikes: {
+    type: Number,
+    default: 0
+  },
   timestamp: {
     type: Date,
     default: Date.now,

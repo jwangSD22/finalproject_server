@@ -80,11 +80,8 @@ router.get('/posts/user/:username',verifyToken,post_controller.get_user_posts)
 // PUT update a post by POST ID
 router.put('/posts/:id',verifyToken) 
 
-//PUT update a post by adding a **LIKE**
-router.put('/posts/:id/addlike',verifyToken,post_controller.post_add_like)
-
-//PUT update a post by removing a **LIKE**
-router.put('/posts/:id/removelike',verifyToken,post_controller.post_remove_like)
+//PUT update a post by toggling a **LIKE** status
+router.put('/posts/:id/togglelike',verifyToken,post_controller.post_toggle_like)
 
 
 // DELETE delete a post by POST ID
@@ -121,6 +118,9 @@ router.get('/posts/:id/comments',verifyToken,message_controller.get_all_comments
 
 //GET ALL MESSAGES for a specific chat by CHAT ID
 router.get('/chats/:id/messages',verifyToken)
+
+//PUT update a COMMENT by MESSAGE ID to TOGGLE **LIKES** status
+router.put('/comments/:id/togglelike',verifyToken,message_controller.comment_toggle_like)
 
 //PUT update a COMMENT by MESSAGE ID to add **LIKES**
 router.put('/comments/:id/addlike',verifyToken)
