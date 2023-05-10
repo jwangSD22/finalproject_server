@@ -7,10 +7,19 @@ const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.JWT_SECRET;
 const s3 = require("./s3instance");
 
+
+
 exports.login = async function (req, res, next) {
   try {
-    const { email, password } = req.body;
-    const thisUser = await User.findOne({ email: email });
+    const { emailOrUsername, password } = req.body;
+
+    function isEmail(str) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(str);
+    }
+
+
+    const thisUser = isEmail(emailOrUsername)?await User.findOne({ email: emailOrUsername }):await User.findOne({ username: emailOrUsername })
     bcrypt.compare(password, thisUser.password, (err, result) => {
       if (err) {
         //handle err
