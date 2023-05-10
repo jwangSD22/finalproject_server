@@ -37,7 +37,7 @@ const ChatSchema = new Schema({
         
         }
       else {
-        return 'No Preview'
+        return ''
       }    
             
           
