@@ -19,20 +19,20 @@ try{
     const author = await User.findOne({username:user})
     
     const comment = new Message({
-        author:author,
-        message:message,
-        parentPost: post
+        author:author._id,
+        message:message
     })
     
-    comment.save()
+    await comment.save()
     post.comments.push(comment)
     post.numberOfComments++
-    post.save()
+    await post.save()
 
     res.json(comment)
     
 }
 catch(err){
+    console.log(err)
     res.status(400).json({error:err})
 }
 
@@ -74,8 +74,6 @@ exports.get_all_comments = async function(req,res,next) {
 
 
 }
-
-
 
 //PUT update a COMMENT by MESSAGE ID to toggle **LIKES** status
 exports.comment_toggle_like = async function (req, res, next) {

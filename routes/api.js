@@ -122,9 +122,6 @@ router.get('/chats/:id/messages',verifyToken)
 //PUT update a COMMENT by MESSAGE ID to TOGGLE **LIKES** status
 router.put('/comments/:id/togglelike',verifyToken,message_controller.comment_toggle_like)
 
-//PUT update a COMMENT by MESSAGE ID to add **LIKES**
-router.put('/comments/:id/addlike',verifyToken)
-
 //PUT update a MESSAGE for a specific CHAT ID with a new IMAGE
 router.put('/messages/:id/addimage',verifyToken)
 

@@ -33,14 +33,6 @@ const MessageSchema = new Schema({
     type: Date,
     default: Date.now,
     required: true
-  },
-  parentPost:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post'
-  },
-  parentChat:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Chat'
   }
 });
 
