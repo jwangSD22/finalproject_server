@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('finalproject-server:server');
 var http = require('http');
+const socketIO = require('socket.io');
+
 
 /**
  * Get port from environment and store in Express.
@@ -21,6 +23,7 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -32,6 +35,33 @@ server.on('listening', onListening);
 /**
  * Normalize a port into a number, string, or false.
  */
+
+///////////////
+
+const io =  socketIO(server, {
+  path: "/socketio",
+  cors: {
+    origin:'http://localhost:3006'
+  }
+});
+
+//logic for socketIO
+io.on("connection", (socket) => {
+  console.log("a user is connected");
+  console.log(
+    `Socket ${socket.id} connected from ${socket.request.headers.host}`
+  );
+
+  socket.on("join-room", (roomid) => {
+    console.log(`joining room ${roomid}`);
+    socket.join(roomid);
+    io.to(roomid).emit("user-joined", "A new user has joiend the room");
+  });
+});
+
+
+/////////////
+
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
@@ -88,3 +118,6 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+module.exports = server;

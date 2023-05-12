@@ -89,8 +89,8 @@ router.delete('/posts/:id',verifyToken)
 
 //<-----------------CHAT ROUTES----------------->//
 
-//GET chat between two users & create if doesn't exist
-router.get('/chats/',verifyToken,chat_controller.get_chat)
+//POST other username to get chat between two users & create if doesn't exist
+router.post('/chats/',verifyToken,chat_controller.get_chat)
 
 //GET chats for a specific user
 router.get('/chats/user/',verifyToken,chat_controller.get_all_chats)
@@ -98,11 +98,14 @@ router.get('/chats/user/',verifyToken,chat_controller.get_all_chats)
 //GET start a socket.io session for a specific chat by CHAT ID
 router.get('/chats/:id',verifyToken)
 
+//GET ALL MESSAGES for a specific chat by CHAT ID
+router.get('/chats/:id/messages',verifyToken)
+
+//POST create a new MESSAGE for a specific chat by CHAT ID
+router.post('/chats/:id/newmessage',verifyToken)
+
 //POST logout of a chat
 router.post('/chats/:id',verifyToken)
-
-//PUT update a specific chat's preview message by getting the first message by CHAT ID
-router.put('/chats/:id/preview',verifyToken)
 
 //DELETE delete a chat session from a user's list by USER ID
 router.delete('/chats/user/:id',verifyToken)
@@ -113,14 +116,12 @@ router.delete('/chats/user/:id',verifyToken)
 //POST create a new COMMENT for a specific post by POST ID
 router.post('/posts/:id/newcomment',verifyToken,message_controller.post_comment)
 
-//POST create a new MESSAGE for a specific chat by CHAT ID
-router.post('/chats/:id/newmessage',verifyToken)
+
 
 //GET ALL COMMENTS for a specific post by POST ID
 router.get('/posts/:id/comments',verifyToken,message_controller.get_all_comments)
 
-//GET ALL MESSAGES for a specific chat by CHAT ID
-router.get('/chats/:id/messages',verifyToken)
+
 
 //PUT update a COMMENT by MESSAGE ID to TOGGLE **LIKES** status
 router.put('/comments/:id/togglelike',verifyToken,message_controller.comment_toggle_like)
