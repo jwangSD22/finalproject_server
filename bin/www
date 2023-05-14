@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('finalproject-server:server');
 var http = require('http');
-const socketIO = require('socket.io');
+const socketio = require('./socketioserver')
 
 
 /**
@@ -32,36 +32,16 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+///////////////
+//initialize Socket.IO server with server as param
+socketio(server)
+///////////////
+
+
 /**
  * Normalize a port into a number, string, or false.
  */
-
-///////////////
-
-const io =  socketIO(server, {
-  path: "/socketio",
-  cors: {
-    origin:'http://localhost:3006'
-  }
-});
-
-//logic for socketIO
-io.on("connection", (socket) => {
-  console.log("a user is connected");
-  console.log(
-    `Socket ${socket.id} connected from ${socket.request.headers.host}`
-  );
-
-  socket.on("join-room", (roomid) => {
-    console.log(`joining room ${roomid}`);
-    socket.join(roomid);
-    io.to(roomid).emit("user-joined", "A new user has joiend the room");
-  });
-});
-
-
-/////////////
-
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
