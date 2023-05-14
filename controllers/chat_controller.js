@@ -15,9 +15,11 @@ exports.get_chat = async function (req, res, next) {
   try{
     const user1ID = req.user.jwtid;
     const user2 = await User.findOne({ username: req.body.username2 });
+    if(!user2){
+     return res.status(400).json({error:'User does not exist'})
+    }
     const user2ID = user2._id;
     const response = await Chat.findOne({
-  
       participants: { $all: [user1ID, user2ID] },
     });
   
