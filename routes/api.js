@@ -34,31 +34,31 @@ router.get('/', function(req, res, next) {
 
 //<-----------------USER ROUTES----------------->//
 
-//POST login a user
+// POST login a user
 router.post('/users/login',user_controller.login)
 
-//POST logout a user
+// POST logout a user
 router.post('/users/logout', user_controller.logout)
 
-//POST create a new user
+// POST create a new user
 router.post('/users',user_controller.create_user)
 
-//POST handle image submission for profile photo
+// POST handle image submission for profile photo
 router.post('/users/imageUpload',verifyToken,upload.single('profilePhoto'),user_controller.create_user_profile_photo)
 
-//GET check login status
+// GET check login status
 router.get('/users/loginstatus',verifyToken,user_controller.loginstatus)
 
-//GET a list of all users in DB
+// GET a list of all users in DB
 router.get('/users', verifyToken, user_controller.get_allusers)
 
-//GET info for a specific user by USER ID
+// GET info for a specific user by USER ID
 router.get('/users/:username',verifyToken, user_controller.get_user )
 
-//PUT update a user's information
+// PUT update a user's information
 router.put('/users/:username',verifyToken, user_controller.update_user )
 
-//DELETE delete a user's account (NOT IMPLEMENTING AT CURRENT TIME)
+// DELETE delete a user's account (NOT IMPLEMENTING AT CURRENT TIME)
 
 //<-----------------POST ROUTES----------------->//
 
@@ -80,7 +80,7 @@ router.get('/posts/user/:username',verifyToken,post_controller.get_user_posts)
 // PUT update a post by POST ID
 router.put('/posts/:id',verifyToken) 
 
-//PUT update a post by toggling a **LIKE** status
+// PUT update a post by toggling a **LIKE** status
 router.put('/posts/:id/togglelike',verifyToken,post_controller.post_toggle_like)
 
 
@@ -89,47 +89,49 @@ router.delete('/posts/:id',verifyToken)
 
 //<-----------------CHAT ROUTES----------------->//
 
-//POST other username to get chat between two users & create if doesn't exist
+// POST other username to get chat between two users & create if doesn't exist
 router.post('/chats/',verifyToken,chat_controller.get_chat)
 
-//GET chats for a specific user
+// GET chats for a specific user
 router.get('/chats/user/',verifyToken,chat_controller.get_all_chats)
 
 //GET start a socket.io session for a specific chat by CHAT ID
-router.get('/chats/:id',verifyToken)
+  // router.get('/chats/:id',verifyToken)
+  // removed -- this can be started from the frontend
 
-//GET ALL MESSAGES for a specific chat by CHAT ID as PARAM
+
+// GET ALL MESSAGES for a specific chat by CHAT ID as PARAM
 router.get('/chats/:id/messages',verifyToken,chat_controller.get_convo)
 
-//POST create a new MESSAGE for a specific chat by CHAT ID
+// POST create a new MESSAGE for a specific chat by CHAT ID
 router.post('/chats/:id/newmessage',verifyToken)
 
-//POST logout of a chat
+// POST logout of a chat
 router.post('/chats/:id',verifyToken)
 
-//DELETE delete a chat session from a user's list by USER ID
+// DELETE delete a chat session from a user's list by USER ID
 router.delete('/chats/user/:id',verifyToken)
 
 
 //<-----------------MESSAGE/COMMENT ROUTES----------------->//
 
-//POST create a new COMMENT for a specific post by POST ID
+// POST create a new COMMENT for a specific post by POST ID
 router.post('/posts/:id/newcomment',verifyToken,message_controller.post_comment)
 
 
 
-//GET ALL COMMENTS for a specific post by POST ID
+// GET ALL COMMENTS for a specific post by POST ID
 router.get('/posts/:id/comments',verifyToken,message_controller.get_all_comments)
 
 
 
-//PUT update a COMMENT by MESSAGE ID to TOGGLE **LIKES** status
+// PUT update a COMMENT by MESSAGE ID to TOGGLE **LIKES** status
 router.put('/comments/:id/togglelike',verifyToken,message_controller.comment_toggle_like)
 
-//PUT update a MESSAGE for a specific CHAT ID with a new IMAGE
+// PUT update a MESSAGE for a specific CHAT ID with a new IMAGE
 router.put('/messages/:id/addimage',verifyToken)
 
-//DELETE comment on a post by COMMENT ID and update POST
+// DELETE comment on a post by COMMENT ID and update POST
 router.delete('/comments/:id/delete',verifyToken)
 
 //DELETE message in a chat by MESSAGE ID and update CHAT

@@ -2,6 +2,7 @@ const socketIO = require('socket.io');
 const Message = require('../models/message')
 const Chat = require ('../models/chat')
 const User = require('../models/user')
+const mongoose = require('mongoose')
 
 const socketio = (server) =>{
 
@@ -34,12 +35,18 @@ const socketio = (server) =>{
         socket.on('sendMessage', async (messageObject) => {
             const {roomID,userid,username,text} = messageObject
             
+            const room = await Chat.findOne({chatid:roomID})
+            const user = new mongoose.Types.ObjectId(userid)
+            const message = new Message({author:user,message:text})
+            await message.save()
+            room.messages.push(message)
+            await room.save()
             
 
 
 
 
-            io.to(sessionid).emit('newMessage', {_id:'test',username:'username',text:'message text'})
+            io.to(roomID).emit('newMessage', {_id:message.id,username:username,text:text})
         })
 
         socket.on('disconnect', () => {

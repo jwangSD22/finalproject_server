@@ -47,9 +47,9 @@ ChatSchema.virtual("populateMessages").get(async function () {
   
         return {
           messageID: messageID,
-          author: message.author.username,
-          message: message.message,
-          images: message.imageURLs,
+          username: message.author.username,
+          text: message.message,
+          images: await message.imageURLs,
         };
       })
     );

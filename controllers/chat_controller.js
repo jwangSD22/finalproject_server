@@ -105,7 +105,8 @@ exports.get_convo = async function (req,res,next) {
   try{
     const room = await Chat.findOne({chatid:roomID})
 
-    res.json(room.populateMessages)
+    const messages = await room.populateMessages
+    res.json(messages)
 
   }
   catch(err){
