@@ -99,7 +99,25 @@ exports.get_all_chats = async function (req, res, next) {
 
 //GET ALL MESSAGES for a specific chat by CHAT ID
 exports.get_convo = async function (req,res,next) {
-  
+
+  const roomID = req.params.id
+
+  try{
+    const room = await Chat.findOne({chatid:roomID})
+
+    res.json(room.populateMessages)
+
+  }
+  catch(err){
+    console.log(err)
+    res.status(400).json({error:err})
+  }
+
+
+
+
+
+  //needs to return json with ALL the messages 
 }
 
 //PUT update a MESSAGE for a specific CHAT ID with a new IMAGE

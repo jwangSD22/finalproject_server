@@ -98,8 +98,8 @@ router.get('/chats/user/',verifyToken,chat_controller.get_all_chats)
 //GET start a socket.io session for a specific chat by CHAT ID
 router.get('/chats/:id',verifyToken)
 
-//GET ALL MESSAGES for a specific chat by CHAT ID
-router.get('/chats/:id/messages',verifyToken)
+//GET ALL MESSAGES for a specific chat by CHAT ID as PARAM
+router.get('/chats/:id/messages',verifyToken,chat_controller.get_convo)
 
 //POST create a new MESSAGE for a specific chat by CHAT ID
 router.post('/chats/:id/newmessage',verifyToken)

@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const User = require('./user')
 const Schema = mongoose.Schema;
 
 const ImageSchema = new Schema({
-  url: {
+  s3key: {
     type: String,
     required: true
   }
@@ -36,10 +37,32 @@ const MessageSchema = new Schema({
   },
 });
 
+MessageSchema.virtual('imageURLs').get(async function() {
+  const imgKeys = this.images
+  const finalArray = []
+
+  for(let key of imgKeys){
+    const params = {
+      Bucket: bucketName,
+      Key:key.s3key,
+      Expires:3600,
+    }
+    const url = s3.getSignedUrl('getObject',params)
+    finalArray.push(url)
+  }
+
+  return finalArray
+})
+
+
+
+
 MessageSchema.pre("save", function (next) {
     this.timestamp = new Date();
     next();
   });
+
+
 
   
 
