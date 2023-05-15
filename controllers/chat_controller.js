@@ -8,7 +8,6 @@ const sharp = require("sharp");
 const jwt = require("jsonwebtoken");
 const s3 = require("./s3instance");
 const { v4: uuidv4 } = require("uuid");
-const io = require("socket.io");
 
 //GET create a new chat between two users
 exports.get_chat = async function (req, res, next) {
@@ -99,5 +98,8 @@ exports.get_all_chats = async function (req, res, next) {
 //POST create a new MESSAGE for a specific chat by CHAT ID
 
 //GET ALL MESSAGES for a specific chat by CHAT ID
+exports.get_convo = async function (req,res,next) {
+  
+}
 
 //PUT update a MESSAGE for a specific CHAT ID with a new IMAGE

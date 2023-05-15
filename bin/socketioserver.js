@@ -1,8 +1,10 @@
 const socketIO = require('socket.io');
-
-
+const Message = require('../models/message')
+const Chat = require ('../models/chat')
+const User = require('../models/user')
 
 const socketio = (server) =>{
+
 
     const io = socketIO(server, {
         path: "/socketio",
@@ -28,8 +30,16 @@ const socketio = (server) =>{
         });
 
 
-        socket.on('sendMessage', messageObject => {
-            console.log(messageObject)
+        //receiving message from frontend
+        socket.on('sendMessage', async (messageObject) => {
+            const {roomID,userid,username,text} = messageObject
+            
+            
+
+
+
+
+            io.to(sessionid).emit('newMessage', {_id:'test',username:'username',text:'message text'})
         })
 
         socket.on('disconnect', () => {
@@ -39,12 +49,14 @@ const socketio = (server) =>{
       });
       
 
+
+
       //on sendmessage --> need to add to database and reply back  in 'newMessage ' --> needs to send back
       //exactly what the future component will require for generating each message block
 
       //on connection, the axios request should be getting all the message objects and polling back for the info needed to generate componnents
 
-      
+
 
 
 
