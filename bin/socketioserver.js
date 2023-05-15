@@ -10,9 +10,10 @@ const socketio = (server) =>{
     const io = socketIO(server, {
         path: "/socketio",
         cors: {
-          origin:'http://localhost:3006'
+          origin:'*'
         }
       });
+      
       
       //logic for socketIO connection
       io.on("connection", (socket) => {
@@ -21,6 +22,7 @@ const socketio = (server) =>{
           `Socket ${socket.id} connected from ${socket.request.headers.host}`
           
         );
+
         console.log('Connected sockets:', io.sockets.sockets.keys());
 
       
