@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const s3 = require('../controllers/s3instance');
+const bucketName = process.env.BUCKET_NAME;
 
 
 const ImageSchema = new Schema({
@@ -39,7 +40,7 @@ const FriendSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'accepted', 'rejected', 'blocked'],
+    enum: ['pending', 'accepted', 'waiting', 'blocked'],
     default: 'pending'
   },
   timestamp: {
@@ -99,17 +100,19 @@ const UserSchema = new Schema({
 });
 
 UserSchema.virtual('imageURLs').get(async function() {
-  const imgKey = this.profilePhoto
-
+  if(this.profilePhoto){
+    const imgKey = this.profilePhoto
     const params = {
       Bucket: bucketName,
       Key:imgKey.s3key,
       Expires:3600,
     }
     const url = s3.getSignedUrl('getObject',params)
-
-
   return url
+  }
+  else return 'booty'
+
+
 })
 
 UserSchema.index({ privateProfile: 1, 'posts.timestamp': -1 });

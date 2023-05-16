@@ -60,6 +60,10 @@ router.put('/users/:username',verifyToken, user_controller.update_user )
 
 // DELETE delete a user's account (NOT IMPLEMENTING AT CURRENT TIME)
 
+//<-----------------FRIEND ROUTES----------------->//
+
+
+
 //<-----------------POST ROUTES----------------->//
 
 // POST create a new post 

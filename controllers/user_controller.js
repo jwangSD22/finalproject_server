@@ -156,14 +156,21 @@ exports.create_user_profile_photo = async function (req, res, next) {
   }
 };
 
-exports.get_allusers = function (req, res, next) {
+exports.get_allusers = async function (req, res, next) {
   // need to generated signed URL for all profile pictures during this time
 
-  User.find()
-    .exec()
-    .then((result) => {
-      res.json(result);
-    });
+let users = await User.find()
+
+let usersWithPhoto = await Promise.all(
+  users.map(async user => {
+return {...user.toObject(),profilePhotoURL:await user.imageURLs}
+  })
+)
+
+
+return res.json(usersWithPhoto)
+
+
 };
 
 exports.get_user = async function (req, res, next) {
