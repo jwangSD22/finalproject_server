@@ -4,6 +4,7 @@ const user_controller = require('../controllers/user_controller')
 const chat_controller = require('../controllers/chat_controller')
 const post_controller = require('../controllers/post_controller')
 const message_controller = require('../controllers/message_controller')
+const friend_controller = require('../controllers/friend_controller')
 const multer = require('multer')
 
 const storage = multer.memoryStorage();
@@ -62,6 +63,17 @@ router.put('/users/:username',verifyToken, user_controller.update_user )
 
 //<-----------------FRIEND ROUTES----------------->//
 
+// GET all friends of a specific user
+router.get('/user/friends',verifyToken,friend_controller.get_user_friends)
+
+//GET all pending of a specific user
+router.get('/user/pending',verifyToken,friend_controller.get_user_pending)
+
+// POST send an origin friend request to dest USERID from body
+router.post('/user/friendrequest',verifyToken,friend_controller.post_friend_request)
+
+// POST handle pending request action
+router.post('/user/handlerequest',verifyToken,friend_controller.handle_pending_action )
 
 
 //<-----------------POST ROUTES----------------->//

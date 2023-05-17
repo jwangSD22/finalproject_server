@@ -36,7 +36,8 @@ const ChatReferenceSchema = new Schema({
 const FriendSchema = new Schema({
   friend: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required:true
   },
   status: {
     type: String,
@@ -110,7 +111,7 @@ UserSchema.virtual('imageURLs').get(async function() {
     const url = s3.getSignedUrl('getObject',params)
   return url
   }
-  else return 'booty'
+  else return 'NO PROFILE PHOTO'
 
 
 })
