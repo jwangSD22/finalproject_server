@@ -20,7 +20,9 @@ exports.login = async function (req, res, next) {
 
 
     const thisUser = isEmail(emailOrUsername)?await User.findOne({ email: emailOrUsername }):await User.findOne({ username: emailOrUsername })
-    bcrypt.compare(password, thisUser.password, (err, result) => {
+
+    if(thisUser) {
+          bcrypt.compare(password, thisUser.password, (err, result) => {
       if (err) {
         //handle err
         console.log(err);
@@ -37,10 +39,14 @@ exports.login = async function (req, res, next) {
           .json({ token, success: "User Logged-in", ...user });
       } else {
         console.log("passwords do not match");
-        console.log(result);
-        return res.status(401).json({ error: "failed" });
+        return res.status(401).json({ error: "Password incorrect" });
       }
     });
+    }
+    else{
+      res.status(401).json({error:"Username or Email not found"})
+    }
+
   } catch (err) {
     console.log(err);
   }
