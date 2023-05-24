@@ -72,7 +72,7 @@ exports.loginstatus = function (req, res, next) {
 exports.create_user = [
   body("fullName").trim().notEmpty(),
   body("username").trim().notEmpty(),
-  body("password").trim().isLength({ min: 8 }),
+  body("password").trim().isLength({ min: 6 }),
   body("email").trim().isEmail(),
   body("dateOfBirth").trim().isISO8601().toDate(),
   body("aboutMe").trim().isLength({ max: 500 }),
@@ -102,6 +102,7 @@ exports.create_user = [
       /* ADD LOGIC TO LOG IN USER AFTER CREATING THE ACCOUNT??? OR REDIRECT AND FORCE LOGIN */
 
       return res.status(200).json({ success: "User Created" });
+      
     } catch (err) {
       //catch error from password hashing or saving new user
       if (err.code === 11000) {
@@ -161,6 +162,26 @@ exports.create_user_profile_photo = async function (req, res, next) {
     res.status(500).json({ error: "Error uploading profile photo" });
   }
 };
+
+exports.find_user = async function (req,res,next) {
+  let username = req.body.username
+  let email = req.body.email
+  try{
+    const findUser = await User.findOne({username:username})
+    const findEmail = await User.findOne({email:email})
+
+    if(findUser||findEmail){
+      findUser?res.json({usernameError:'Username already exists'}):res.json({emailError:'Email already exists'})
+    }
+    else{
+      return res.status(200).json({success:'Username and Email available'})
+    }
+
+  }
+  catch(err){
+    return res.status(404)
+  }
+}
 
 exports.get_allusers = async function (req, res, next) {
   // need to generated signed URL for all profile pictures during this time

@@ -47,6 +47,9 @@ router.post('/users',user_controller.create_user)
 // POST handle image submission for profile photo
 router.post('/users/imageUpload',verifyToken,upload.single('profilePhoto'),user_controller.create_user_profile_photo)
 
+// POST username or email to check if already in DB for registration process
+router.post('/user', user_controller.find_user)
+
 // GET check login status
 router.get('/users/loginstatus',verifyToken,user_controller.loginstatus)
 
@@ -115,7 +118,6 @@ router.get('/chats/user/',verifyToken,chat_controller.get_all_chats)
   // router.get('/chats/:id',verifyToken)
   // removed -- this can be started from the frontend
 
-
 // GET ALL MESSAGES for a specific chat by CHAT ID as PARAM
 router.get('/chats/:id/messages',verifyToken,chat_controller.get_convo)
 
@@ -134,12 +136,8 @@ router.delete('/chats/user/:id',verifyToken)
 // POST create a new COMMENT for a specific post by POST ID
 router.post('/posts/:id/newcomment',verifyToken,message_controller.post_comment)
 
-
-
 // GET ALL COMMENTS for a specific post by POST ID
 router.get('/posts/:id/comments',verifyToken,message_controller.get_all_comments)
-
-
 
 // PUT update a COMMENT by MESSAGE ID to TOGGLE **LIKES** status
 router.put('/comments/:id/togglelike',verifyToken,message_controller.comment_toggle_like)
