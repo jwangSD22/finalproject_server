@@ -30,23 +30,23 @@ exports.create_post = async function (req, res, next) {
     }
     postContent.images = arrayToUpload;
   }
-
+  
   //create post object
   const newPost = new Post(postContent);
   newPost.save();
   //add post object to author's list of posts
 
+
   author.posts.push(newPost);
   author.save();
 
-  res.send(newPost);
+  res.json(newPost._id);
 };
 
 //POST handle image submission to a specific post by POST ID
 //--> this will filter the image upload and return back the S3 key to the frontend
 exports.handle_image_upload = async function (req, res, next) {
   try {
-    console.log(req.files);
     const files = req.files;
     if (!files || files.length === 0) {
       return res.status(400).json({ error: "No files were uploaded" });
@@ -62,7 +62,7 @@ exports.handle_image_upload = async function (req, res, next) {
 
       // Set the S3 bucket and object key
       const bucketName = process.env.BUCKET_NAME;
-      const objectKey = `profile-photos/${Date.now()}-${file.originalname}`;
+      const objectKey = `post-photos/${Date.now()}-${file.originalname}`;
       finalObjectKeys.push(objectKey);
 
       // Upload the resized image to S3
@@ -75,12 +75,13 @@ exports.handle_image_upload = async function (req, res, next) {
         })
         .promise();
     }
- 
-
-    res.status(200).json({ finalObjectKeys });
+    let s3key = finalObjectKeys[0]
+     res.status(200).json( {s3key});
+     //TEMPORARILY NOT ALLOWING MULTIPLE FILE UPLOADS, ONLY TAKE FIRST ARRAY ELEMENT
   } catch (err) {
+    console.log('triggered here')
     console.error(err);
-    res.status(500).json({ error: "Error uploading profile photo" });
+    res.status(500).json({ error: "Error uploading post photo" });
   }
 };
 
