@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Post = require("../models/post")
 const { body, validationResult } = require("express-validator");
 const AWS = require("aws-sdk");
 const sharp = require("sharp");
@@ -226,6 +227,64 @@ exports.get_user = async function (req, res, next) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
+// GET a specific user's and their friends' posts with pagination
+exports.get_user_friend_posts = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const { page, limit } = req.query;
+
+    // Validate page and limit query parameters
+    const parsedPage = parseInt(page);
+    const parsedLimit = parseInt(limit);
+
+    if (isNaN(parsedPage) || parsedPage < 1 || isNaN(parsedLimit) || parsedLimit < 1) {
+      return res.status(400).json({ error: 'Invalid page or limit parameters' });
+    }
+
+    // Find the user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+
+    // Get the user's and their friends' IDs
+    const userIds = [user._id, ...user.friends.map(friend => friend.friend)];
+
+
+    // Count the total number of posts for the user and their friends
+    const totalPostsCount = await Post.countDocuments({ author: { $in: userIds } });
+
+    // Calculate the offset based on the page and limit
+    const offset = (parsedPage - 1) * parsedLimit;
+
+    // Fetch the posts using aggregation pipeline
+    const posts = await Post.aggregate([
+      // Match posts by the user IDs
+      { $match: { author: { $in: userIds } } },
+      // Sort posts by timestamp in descending order
+      { $sort: { timestamp: -1 } },
+      // Skip posts based on the offset
+      { $skip: offset },
+      // Limit the number of posts
+      { $limit: parsedLimit }
+       ]);
+
+    // Return the response with posts and pagination information
+    res.json({
+      posts,
+      totalPostsCount,
+      currentPage: parsedPage,
+      totalPages: Math.ceil(totalPostsCount / parsedLimit)
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 
 exports.update_user = async function (req, res, next) {
   //need to add verification that email body IS a email in validation

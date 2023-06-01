@@ -16,8 +16,8 @@ const ImageSchema = new Schema({
   
   const PostSchema = new Schema({
     author: {
-      type: String,
-      ref:'User',
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
       index: true
     },

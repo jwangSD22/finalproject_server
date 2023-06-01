@@ -16,7 +16,7 @@ exports.create_post = async function (req, res, next) {
   const author = await User.findOne({ username: jwtusername });
 
   let postContent = {
-    author: jwtusername,
+    author: author._id,
     postMessage: req.body.postMessage,
     timestamp: new Date()
   };

@@ -59,6 +59,9 @@ router.get('/users', verifyToken, user_controller.get_allusers)
 // GET info for a specific user by USER ID
 router.get('/users/:username',verifyToken, user_controller.get_user )
 
+// GET a specific user's and their friends' posts with pagination
+router.get('/users/:username/homeposts',verifyToken,user_controller.get_user_friend_posts)
+
 // PUT update a user's information
 router.put('/users/:username',verifyToken, user_controller.update_user )
 
