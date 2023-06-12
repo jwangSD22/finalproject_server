@@ -57,10 +57,19 @@ const ImageSchema = new Schema({
     }
   });
 
-// PostSchema.pre("save", function (next) {
-//   this.timestamp = new Date();
-//   next();
-// });
+PostSchema.virtual('getFullName').get(
+  async function () {
+    let user = await User.findOne(this.author)
+    return user.fullName
+  }
+)
+
+PostSchema.virtual('getAvatar').get(
+  async function () {
+    let user = await User.findOne(this.author)
+    return user.imageURLs
+  }
+)
 
 PostSchema.virtual('likesFullNames').get(
   async function () {
