@@ -71,18 +71,7 @@ PostSchema.virtual('getAvatar').get(
   }
 )
 
-PostSchema.virtual('likesFullNames').get(
-  async function () {
 
-  let userArray = await this.populate('likes')
-  //execPopulate()??????
-  let fullNameArray = userArray.map(item=>item.fullName)
-
-  return fullNameArray
-
-
-  }
-)
 
 PostSchema.virtual('topCommentsSnippet').get(async function () {
   try {
