@@ -59,6 +59,10 @@ router.get('/users', verifyToken, user_controller.get_allusers)
 // GET info for a specific user by USER ID
 router.get('/users/:username',verifyToken, user_controller.get_user )
 
+// GET pfp URl for specific user by USER ID
+router.get('/users/pfp/:id',verifyToken, user_controller.get_pfp )
+
+
 // GET a specific user's and their friends' posts with pagination
 router.get('/users/:username/homeposts',verifyToken,user_controller.get_user_friend_posts)
 
@@ -141,6 +145,8 @@ router.post('/posts/:id/newcomment',verifyToken,message_controller.post_comment)
 
 // GET ALL COMMENTS for a specific post by POST ID
 router.get('/posts/:id/comments',verifyToken,message_controller.get_all_comments)
+
+router.get('/comments/:id',verifyToken,message_controller.get_comment)
 
 // PUT update a COMMENT by MESSAGE ID to TOGGLE **LIKES** status
 router.put('/comments/:id/togglelike',verifyToken,message_controller.comment_toggle_like)

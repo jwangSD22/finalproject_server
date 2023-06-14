@@ -228,6 +228,32 @@ exports.get_user = async function (req, res, next) {
   }
 };
 
+exports.get_pfp = async function (req,res,next) {
+  try{
+    let userID = req.params.id
+    const bucketName = process.env.BUCKET_NAME;
+    let thisUser = await User.findOne({ _id:userID });
+
+    if (thisUser.profilePhoto) {
+      const params = {
+        Bucket: bucketName,
+        Key: thisUser.profilePhoto.s3key,
+        Expires: 3600,
+      };
+      const url = s3.getSignedUrl("getObject", params);
+      res.json({ profilePhotoURL: url });
+    } else {
+      res.json({profilePhotoURL:'NO PROFILE PHOTO'});
+    }
+
+
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 
 // GET a specific user's and their friends' posts with pagination
 exports.get_user_friend_posts = async (req, res) => {

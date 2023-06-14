@@ -75,6 +75,30 @@ exports.get_all_comments = async function(req,res,next) {
 
 }
 
+//GET one COMMENT by COMMENT ID
+
+exports.get_comment = async function(req,res,next) {
+  const commentID = req.params.id
+  try{
+      const commentData = await Message.findOne({_id:commentID})
+      .populate('author')
+
+      commentData.pfpURL = commentData.author.imageURLs
+
+    
+      
+  
+      return res.json(commentData)
+  }
+  catch(err){
+      console.log(err)
+      res.status(400).res.json({error:err})
+  }
+
+
+}
+
+
 //PUT update a COMMENT by MESSAGE ID to toggle **LIKES** status
 exports.comment_toggle_like = async function (req, res, next) {
     const userId = req.user.jwtid;
