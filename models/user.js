@@ -87,9 +87,8 @@ const UserSchema = new Schema({
   friendRequests: {
     type: [FriendSchema]
   },
-  aboutMe: {
-    type: String,
-    maxLength:[200, 'aboutMe must not exceed 200 characters']
+  bgPhoto: {
+    type: ImageSchema
   },
   profilePhoto: {
     type: ImageSchema
@@ -115,6 +114,24 @@ UserSchema.virtual('imageURLs').get(async function() {
 
 
 })
+
+UserSchema.virtual('bgURL').get(async function() {
+  if(this.bgPhoto){
+    const imgKey = this.bgPhoto
+    const params = {
+      Bucket: bucketName,
+      Key:imgKey.s3key,
+      Expires:3600,
+    }
+    const url = s3.getSignedUrl('getObject',params)
+  return url
+  }
+  else return 'NO PROFILE PHOTO'
+
+
+})
+
+
 
 UserSchema.index({ privateProfile: 1, 'posts.timestamp': -1 });
 

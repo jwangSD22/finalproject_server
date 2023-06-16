@@ -47,6 +47,10 @@ router.post('/users',user_controller.create_user)
 // POST handle image submission for profile photo
 router.post('/users/imageUpload',verifyToken,upload.single('profilePhoto'),user_controller.create_user_profile_photo)
 
+// POST handle image submission for bg photo
+router.post('/users/imageUpload',verifyToken,upload.single('bgPhoto'),user_controller.create_user_bg)
+
+
 // POST username or email to check if already in DB for registration process
 router.post('/user', user_controller.find_user)
 

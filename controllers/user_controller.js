@@ -148,14 +148,33 @@ exports.create_user_profile_photo = async function (req, res, next) {
       })
       .promise();
 
-    // test code to see if i can pull back the URL from the newly created object
-    // const params = {
-    //   Bucket: bucketName,
-    //   Key: objectKey,
-    //   Expires: 3600,
-    // };
-    // const url = s3.getSignedUrl("getObject", params);
-    // console.log(url);
+    res.status(200).json({ objectKey });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error uploading profile photo" });
+  }
+};
+
+exports.create_user_bg = async function (req, res, next) {
+  try {
+    const file = req.file;
+
+    const resizedImageBuffer = await sharp(file.buffer)
+      .toBuffer();
+
+    // Set the S3 bucket and object key
+    const bucketName = process.env.BUCKET_NAME;
+    const objectKey = `bg-photos/${Date.now()}-${file.originalname}`;
+
+    // Upload the resized image to S3
+    await s3
+      .putObject({
+        Bucket: bucketName,
+        Key: objectKey,
+        Body: resizedImageBuffer,
+        ContentType: file.mimetype,
+      })
+      .promise();
 
     res.status(200).json({ objectKey });
   } catch (err) {
