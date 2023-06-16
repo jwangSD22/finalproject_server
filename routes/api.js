@@ -78,7 +78,7 @@ router.put('/users/:username',verifyToken, user_controller.update_user )
 //<-----------------FRIEND ROUTES----------------->//
 
 // GET all friends of a specific user
-router.get('/user/friends',verifyToken,friend_controller.get_user_friends)
+router.get('/user/friends/:username',verifyToken,friend_controller.get_user_friends)
 
 //GET all pending of a specific user
 router.get('/user/pending',verifyToken,friend_controller.get_user_pending)

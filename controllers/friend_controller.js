@@ -13,7 +13,7 @@ const s3 = require("./s3instance");
 exports.get_user_friends = async function (req,res,next) {
 
     try{
-        const user = await User.findOne({_id:req.user.jwtid})
+        const user = await User.findOne({username:req.params.username})
         const friendsArray = user.friends
       
         const friendsWithPhoto = await Promise.all(
