@@ -126,7 +126,7 @@ UserSchema.virtual('bgURL').get(async function() {
     const url = s3.getSignedUrl('getObject',params)
   return url
   }
-  else return 'NO PROFILE PHOTO'
+  else return null
 
 
 })

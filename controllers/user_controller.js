@@ -225,7 +225,7 @@ exports.get_user = async function (req, res, next) {
   try {
     let username = req.params.username;
     const bucketName = process.env.BUCKET_NAME;
-    let thisUser = await User.findOne({ username: username });
+    let thisUser = await User.findOne({ username: username })
 
     if (thisUser === null) {
       return res.status(404).json({ message: "User does not exist" });
@@ -237,10 +237,12 @@ exports.get_user = async function (req, res, next) {
         Expires: 3600,
       };
       const url = s3.getSignedUrl("getObject", params);
-      res.json({ ...thisUser.toObject(), profilePhotoURL: url });
+      res.json({ ...thisUser.toObject(), profilePhotoURL: url,bgPhotoURL:await thisUser.bgURL });
     } else {
       res.json({ ...thisUser.toObject() });
     }
+    
+
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
@@ -272,6 +274,34 @@ exports.get_pfp = async function (req,res,next) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+exports.get_bg = async function (req,res,next) {
+  try{
+    let userID = req.params.id
+    const bucketName = process.env.BUCKET_NAME;
+    let thisUser = await User.findOne({ _id:userID });
+
+    if (thisUser.profilePhoto) {
+      const params = {
+        Bucket: bucketName,
+        Key: thisUser.bgPhoto.s3key,
+        Expires: 3600,
+      };
+      const url = s3.getSignedUrl("getObject", params);
+      res.json({ bgPhotoURL: url });
+    } else {
+      res.json({bgPhotoURL:null});
+    }
+
+
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+
 
 
 // GET a specific user's and their friends' posts with pagination
@@ -344,17 +374,23 @@ exports.update_user = async function (req, res, next) {
     //must conform with imageschema defined in userschema -- use s3key
     let username = req.user.jwtusername;
 
+
+    //other updates can be added based on the body
     let updateFields = {
-      fullName: req.body.fullName,
-      email: req.body.email,
-      aboutMe: req.body.aboutMe,
-    };
+        };
+
     //conditionally apply profilePhoto s3key to updateFields if it's present in req.body
-    if (req.body.profilePhoto) {
+    if (req.body.pfpKey) {
       updateFields.profilePhoto = {
-        s3key: req.body.profilePhoto,
+        s3key: req.body.pfpKey,
       };
     }
+    if (req.body.bgKey) {
+      updateFields.bgPhoto = {
+        s3key: req.body.bgKey,
+      };
+    }
+    
 
     console.log(req.body);
 

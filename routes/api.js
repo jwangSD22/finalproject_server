@@ -48,7 +48,7 @@ router.post('/users',user_controller.create_user)
 router.post('/users/imageUpload',verifyToken,upload.single('profilePhoto'),user_controller.create_user_profile_photo)
 
 // POST handle image submission for bg photo
-router.post('/users/imageUpload',verifyToken,upload.single('bgPhoto'),user_controller.create_user_bg)
+router.post('/users/bgUpload',verifyToken,upload.single('bgPhoto'),user_controller.create_user_bg)
 
 
 // POST username or email to check if already in DB for registration process
@@ -63,8 +63,11 @@ router.get('/users', verifyToken, user_controller.get_allusers)
 // GET info for a specific user by USER ID
 router.get('/users/:username',verifyToken, user_controller.get_user )
 
-// GET pfp URl for specific user by USER ID
+// GET pfp URL for specific user by USER ID
 router.get('/users/pfp/:id',verifyToken, user_controller.get_pfp )
+
+// GET bg URL for specific user by USER ID
+router.get('/users/bg/:id',verifyToken, user_controller.get_bg )
 
 
 // GET a specific user's and their friends' posts with pagination
