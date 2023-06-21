@@ -57,22 +57,53 @@ exports.get_user_pending = async function (req,res,next) {
 
 // POST send an origin friend request to dest USER from body
 exports.post_friend_request = async function (req,res,next) {
-const usernameOrigin = req.body.usernameOrigin
 const userIDEnd = req.body.userIDEnd
-
-const originUser = await User.findOne({username:usernameOrigin})
-const endUser = await User.findOne({_id:userIDEnd})
-endUser.friendRequests.push({friend:originUser,status:'pending'})
-originUser.friendRequests.push({friend:endUser,status:'waiting'})
-
-await endUser.save()
-await originUser.save()
-
-
-
-    res.json(req.body)
+console.log(req.user)
+try{
+  const originUser = await User.findOne({username:req.user.jwtusername})
+  const endUser = await User.findOne({_id:userIDEnd})
+  endUser.friendRequests.push({friend:originUser,status:'pending'})
+  originUser.friendRequests.push({friend:endUser,status:'waiting'})
+  
+  await endUser.save()
+  await originUser.save()
+  res.json('Friend request success')
 
 }
+catch(err){
+  console.log(err)
+  res.status(400).json('Friend request failed')
+}
+}
+
+// POST handle remove friend request
+exports.remove_friend_request = async function (req, res, next) {
+  const userIDEnd = req.body.userIDEnd;
+  try {
+    const originUser = await User.findOne({ username: req.user.jwtusername });
+    const endUser = await User.findOne({ _id: userIDEnd });
+
+
+    // Remove friend request from endUser's friendRequests
+    await User.updateOne(
+      { _id: endUser._id },
+      { $pull: { friendRequests: { friend: originUser._id } } }
+    );
+
+    // Remove friend request from originUser's friendRequests
+    await User.updateOne(
+      { _id: originUser._id },
+      { $pull: { friendRequests: { friend: endUser._id } } }
+    );
+
+    res.json('Friend request removed successfully');
+  } catch (err) {
+    console.log(err);
+    res.status(400).json('Failed to remove friend request');
+  }
+};
+
+
 
 // POST handle pending request action
 exports.handle_pending_action = async function (req, res, next) {
