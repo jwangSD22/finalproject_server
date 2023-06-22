@@ -73,6 +73,12 @@ router.get('/users/bg/:id',verifyToken, user_controller.get_bg )
 // GET a specific user's and their friends' posts with pagination
 router.get('/users/:username/homeposts',verifyToken,user_controller.get_user_friend_posts)
 
+// Get a specific user's posts only with pagination
+router.get('/users/:username/posts',verifyToken,user_controller.get_solo_user_posts)
+
+
+
+
 // PUT update a user's information
 router.put('/users/:username',verifyToken, user_controller.update_user )
 
