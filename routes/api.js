@@ -92,6 +92,9 @@ router.post('/user/friendrequest',verifyToken,friend_controller.post_friend_requ
 // POST send an origin friend request to dest USERID from body
 router.post('/user/removefriendrequest',verifyToken,friend_controller.remove_friend_request)
 
+router.post('/user/removefriend',verifyToken,friend_controller.remove_friend)
+
+
 // POST handle pending request action
 router.post('/user/handlerequest',verifyToken,friend_controller.handle_pending_action )
 

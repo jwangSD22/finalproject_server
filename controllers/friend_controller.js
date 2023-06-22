@@ -57,11 +57,11 @@ exports.get_user_pending = async function (req,res,next) {
 
 // POST send an origin friend request to dest USER from body
 exports.post_friend_request = async function (req,res,next) {
-const userIDEnd = req.body.userIDEnd
+const endUserID = req.body.endUserID
 console.log(req.user)
 try{
   const originUser = await User.findOne({username:req.user.jwtusername})
-  const endUser = await User.findOne({_id:userIDEnd})
+  const endUser = await User.findOne({_id:endUserID})
   endUser.friendRequests.push({friend:originUser,status:'pending'})
   originUser.friendRequests.push({friend:endUser,status:'waiting'})
   
@@ -78,10 +78,10 @@ catch(err){
 
 // POST handle remove friend request
 exports.remove_friend_request = async function (req, res, next) {
-  const userIDEnd = req.body.userIDEnd;
+  const endUserID = req.body.endUserID;
   try {
     const originUser = await User.findOne({ username: req.user.jwtusername });
-    const endUser = await User.findOne({ _id: userIDEnd });
+    const endUser = await User.findOne({ _id: endUserID });
 
 
     // Remove friend request from endUser's friendRequests
@@ -103,54 +103,72 @@ exports.remove_friend_request = async function (req, res, next) {
   }
 };
 
+// POST handle completely remove friend
+exports.remove_friend = async function (req, res, next) {
+  const friendId = req.body.endUserID;
+  try {
+    const originUser = await User.findOne({ username: req.user.jwtusername });
+    const friendUser = await User.findOne({ _id: friendId });
+    console.log(friendUser)
+
+    // Remove friend from friendUser's friends list
+    friendUser.friends.pull({ friend: originUser._id });
+    friendUser.friendRequests.pull({ friend: originUser._id });
+
+
+    // Remove friend from originUser's friends list
+    originUser.friends.pull({ friend: friendUser._id });
+
+    // Save the updated documents
+    await friendUser.save();
+    await originUser.save();
+
+    res.json('Friend removed successfully');
+  } catch (err) {
+    console.log(err);
+    res.status(400).json('Failed to remove friend');
+  }
+};
 
 
 // POST handle pending request action
 exports.handle_pending_action = async function (req, res, next) {
-    const param = req.body.param;
-    const originUser = await User.findOne({ _id: req.user.jwtid });
-    const endUser = await User.findOne({ _id: req.body.userid });
-  
-    if (param === 'reject') {
-      // Remove each other from friendRequests array
-      originUser.friendRequests = originUser.friendRequests.filter(
-        (request) => request.friend.toString() !== req.body.userid
-      );
-      endUser.friendRequests = endUser.friendRequests.filter(
-        (request) => request.friend.toString() !== req.user.jwtid
-      );
-    } else if (param === 'accept') {
-      // Add friends to each other's lists and update friendRequests status
-      const newFriend = {
-        friend: endUser._id,
-        status: 'accepted',
-      };
-  
-      originUser.friends.push(newFriend);
-      originUser.friendRequests = originUser.friendRequests.filter(
-        (request) => request.friend.toString() !== req.body.userid
-      );
-  
-      endUser.friends.push({ friend: originUser._id, status: 'accepted' });
-      endUser.friendRequests = endUser.friendRequests.map((request) =>
-        request.friend.toString() === req.user.jwtid
-          ? { ...request, status: 'accepted' }
-          : request
-      );
-    } else if (param === 'close') {
-      // Remove the endUser from originUser's friendRequests
-      originUser.friendRequests = originUser.friendRequests.filter(
-        (request) =>
-          request.friend.toString() !== req.body.userid ||
-          request.status !== 'accepted'
-      );
-    } else {
-      return res.status(400).json('NOT VALID REQUEST');
-    }
-  
-    // Save the updated documents
-    await originUser.save();
-    await endUser.save();
-  
-    res.status(200).json('Request handled successfully');
-  };
+  const originUser = await User.findOne({ _id: req.user.jwtid });
+  const endUser = await User.findOne({ _id: req.body.endUserID });
+  const param = req.body.param
+
+  if (param === 'reject') {
+    // Remove each other from friendRequests array
+    originUser.friendRequests.pull(req.body.endUserID);
+    endUser.friendRequests.pull(req.user.jwtid);
+  } else if (param === 'accept') {
+
+    // Add friends to each other's lists and update friendRequests status
+    const newFriend = {
+      friend: endUser._id,
+      status: 'accepted',
+    };
+
+    originUser.friends.push(newFriend);
+    originUser.friendRequests.pull({friend:endUser._id});
+    
+
+    endUser.friends.push({ friend: originUser._id, status: 'accepted' });
+    const friendRequest = endUser.friendRequests.find(
+      (request) => request.friend.toString() === req.user.jwtid
+    );
+    friendRequest.status='accepted'
+
+  } else if (param === 'close') {
+    // Remove the endUser from originUser's friendRequests
+    originUser.friendRequests.pull(req.body.endUserID);
+  } else {
+    return res.status(400).json('NOT VALID REQUEST');
+  }
+
+  // Save the updated documents
+  await originUser.save();
+  await endUser.save();
+
+  res.status(200).json('Request handled successfully');
+};
