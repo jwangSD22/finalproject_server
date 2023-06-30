@@ -12,12 +12,16 @@ const s3 = require("./s3instance");
 
 exports.login = async function (req, res, next) {
   try {
-    const { emailOrUsername, password } = req.body;
+    let { emailOrUsername, password } = req.body;
+
+    emailOrUsername=emailOrUsername.toLowerCase();
 
     function isEmail(str) {
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return regex.test(str);
     }
+
+    console.log(req.body)
 
 
     const thisUser = isEmail(emailOrUsername)?await User.findOne({ email: emailOrUsername }):await User.findOne({ username: emailOrUsername })
@@ -72,9 +76,9 @@ exports.loginstatus = function (req, res, next) {
 
 exports.create_user = [
   body("fullName").trim().notEmpty(),
-  body("username").trim().notEmpty(),
+  body("username").trim().notEmpty().customSanitizer(value=>value.toLowerCase()),
   body("password").trim().isLength({ min: 6 }),
-  body("email").trim().isEmail(),
+  body("email").trim().isEmail().customSanitizer(value=>value.toLowerCase()),
   body("dateOfBirth").trim().isISO8601().toDate(),
   body("aboutMe").trim().isLength({ max: 500 }),
 
