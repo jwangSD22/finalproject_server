@@ -63,8 +63,9 @@ exports.get_all_chats = async function (req, res, next) {
       chats.map(async (chatid) => {
         const chatData = await Chat.findOne({ _id: chatid });
         const partnerID = chatData.participants.filter(
-          (id) => id !== req.user.jwtid
+          (id) => id._id.toString(0) !== req.user.jwtid 
         );
+
         const partnerDB = await User.findOne({ _id: partnerID });
         const partnerFullName = partnerDB.fullName;
         const partnerUsername = partnerDB.username
@@ -72,6 +73,7 @@ exports.get_all_chats = async function (req, res, next) {
         return {
           ...chatData.toObject(),
           preview: preview,
+          partnerID:partnerID[0],
           partnerFullName: partnerFullName,
           partnerUsername: partnerUsername
         };
