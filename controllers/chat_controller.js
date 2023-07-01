@@ -62,17 +62,18 @@ exports.get_all_chats = async function (req, res, next) {
     const chatData = await Promise.all(
       chats.map(async (chatid) => {
         const chatData = await Chat.findOne({ _id: chatid });
-        const chatDataParticipants = [...chatData.participants];
-        const partnerID = chatDataParticipants.filter(
+        const partnerID = chatData.participants.filter(
           (id) => id !== req.user.jwtid
         );
         const partnerDB = await User.findOne({ _id: partnerID });
-        const partnerName = partnerDB.fullName;
+        const partnerFullName = partnerDB.fullName;
+        const partnerUsername = partnerDB.username
         const preview = await chatData.preview;
         return {
           ...chatData.toObject(),
           preview: preview,
-          partner: partnerName,
+          partnerFullName: partnerFullName,
+          partnerUsername: partnerUsername
         };
       })
     );

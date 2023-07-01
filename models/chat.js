@@ -30,7 +30,7 @@ ChatSchema.virtual("preview").get(async function () {
       const previewMessageID = this.messages[this.messages.length - 1];
       const messageData = await Message.findOne(previewMessageID);
 
-      return messageData.message.slice(0, 25);
+      return messageData;
     } else {
       return "";
     }
