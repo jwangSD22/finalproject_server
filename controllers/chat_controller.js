@@ -62,25 +62,32 @@ exports.get_all_chats = async function (req, res, next) {
     const chatData = await Promise.all(
       chats.map(async (chatid) => {
         const chatData = await Chat.findOne({ _id: chatid });
-        const partnerID = chatData.participants.filter(
-          (id) => id._id.toString(0) !== req.user.jwtid 
-        );
-
-        const partnerDB = await User.findOne({ _id: partnerID });
-        const partnerFullName = partnerDB.fullName;
-        const partnerUsername = partnerDB.username
-        const preview = await chatData.preview;
-        return {
-          ...chatData.toObject(),
-          preview: preview,
-          partnerID:partnerID[0],
-          partnerFullName: partnerFullName,
-          partnerUsername: partnerUsername
-        };
+        if(chatData){
+          const partnerID = chatData.participants.filter(
+            (id) => id._id.toString(0) !== req.user.jwtid 
+          );
+  
+          const partnerDB = await User.findOne({ _id: partnerID });
+          const partnerFullName = partnerDB.fullName;
+          const partnerUsername = partnerDB.username
+          const preview = await chatData.preview;
+          return {
+            ...chatData.toObject(),
+            preview: preview,
+            partnerID:partnerID[0],
+            partnerFullName: partnerFullName,
+            partnerUsername: partnerUsername
+          };
+        }
+        
       })
     );
 
-    res.json(chatData);
+    //Boolean is being used as a CB fxn here to analyze the filter result. It will get rid of any null/undefined 
+    //from erroneous returns from the above async that checks each chatID
+    const filteredChatData = chatData.filter(Boolean)
+
+    res.json(filteredChatData);
   } catch (err) {
     console.log(err);
     res.status(400).json({ error: err });
