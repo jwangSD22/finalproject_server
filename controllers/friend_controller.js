@@ -45,7 +45,6 @@ exports.get_user_pending = async function (req,res,next) {
         return {...user.toObject(),status:friendSchema.status,profilePhotoURL:await user.imageURLs}
     }))
 
-    console.log(thisUserPendingFullData)
     
 
     res.json(thisUserPendingFullData)
@@ -58,7 +57,6 @@ exports.get_user_pending = async function (req,res,next) {
 // POST send an origin friend request to dest USER from body
 exports.post_friend_request = async function (req,res,next) {
 const endUserID = req.body.endUserID
-console.log(req.user)
 try{
   const originUser = await User.findOne({username:req.user.jwtusername})
   const endUser = await User.findOne({_id:endUserID})
@@ -139,17 +137,17 @@ exports.handle_pending_action = async function (req, res, next) {
 
   if (param === 'reject') {
     // Remove each other from friendRequests array
-    originUser.friendRequests.pull(req.body.endUserID);
-    endUser.friendRequests.pull(req.user.jwtid);
+    originUser.friendRequests.pull({friend:req.body.endUserID});
+    endUser.friendRequests.pull({friend:req.user.jwtid});
   } else if (param === 'accept') {
 
-    // Add friends to each other's lists and update friendRequests status
     const newFriend = {
       friend: endUser._id,
       status: 'accepted',
     };
-
+    // Add friends to each other's lists and update friendRequests status
     originUser.friends.push(newFriend);
+    // Remove the friend request tagged as "pending" from friendRequets
     originUser.friendRequests.pull({friend:endUser._id});
     
 
@@ -161,14 +159,14 @@ exports.handle_pending_action = async function (req, res, next) {
 
   } else if (param === 'close') {
     // Remove the endUser from originUser's friendRequests
-    originUser.friendRequests.pull(req.body.endUserID);
+    originUser.friendRequests.pull({friend:req.body.endUserID});
   } else {
     return res.status(400).json('NOT VALID REQUEST');
   }
 
   // Save the updated documents
-  await originUser.save();
-  await endUser.save();
+   await originUser.save();
+   await endUser.save();
 
   res.status(200).json('Request handled successfully');
 };
