@@ -101,30 +101,39 @@ exports.get_comment = async function(req,res,next) {
 
 //PUT update a COMMENT by MESSAGE ID to toggle **LIKES** status
 exports.comment_toggle_like = async function (req, res, next) {
-    const userId = req.user.jwtid;
-    const commentID = req.params.id;
+  const userId = req.user.jwtid;
+  const commentID = req.params.id;
+
+  try {
     const comment = await Message.findById(commentID);
-  
-    try {
-      const index = comment.likes.indexOf(userId);
-      if (index > -1) {
-        // User already liked the post, remove the like
-        comment.likes.splice(index, 1);
-        comment.numberOfLikes--;
-      } else {
-        // User hasn't liked the post yet, add the like
-        comment.likes.push(userId);
-        comment.numberOfLikes++;
-      }
-  
-      // Save the updated post and return the updated document
-      const updatedComment = await comment.save();
-  
-      return res.json(updatedComment);
-    } catch (error) {
-      res.status(400).json(error);
+
+    const index = comment.likes.indexOf(userId);
+    if (index > -1) {
+      // User already liked the post, remove the like
+      comment.likes.splice(index, 1);
+      comment.numberOfLikes--;
+    } else {
+      // User hasn't liked the post yet, add the like
+      comment.likes.push(userId);
+      comment.numberOfLikes++;
     }
-  };
+
+    // Update the comment without modifying the timestamps
+    const updatedComment = await Message.updateOne(
+      { _id: commentID },
+      { $set: {
+          likes: comment.likes,
+          numberOfLikes: comment.numberOfLikes
+        }
+      },
+      { timestamps: false }
+    );
+
+    return res.json(updatedComment);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
 
 
 
