@@ -48,7 +48,7 @@ const socketio = (server) =>{
 
 
 
-            io.to(roomID).emit('newMessage', {_id:message.id,username:username,text:text})
+            io.to(roomID).emit('newMessage', {_id:message.id,username:username,text:text,messageID:message.id,timestamp:message.timestamp})
         })
 
         socket.on('disconnect', () => {

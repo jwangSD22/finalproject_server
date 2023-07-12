@@ -50,6 +50,7 @@ ChatSchema.virtual("populateMessages").get(async function () {
           username: message.author.username,
           text: message.message,
           images: await message.imageURLs,
+          timestamp:message.timestamp
         };
       })
     );
