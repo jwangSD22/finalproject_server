@@ -57,10 +57,10 @@ const ImageSchema = new Schema({
     }
   });
 
-PostSchema.virtual('getFullName').get(
+PostSchema.virtual('getFullNameAndUsername').get(
   async function () {
     let user = await User.findOne(this.author)
-    return user.fullName
+    return {fullName:user.fullName, username:user.username}
   }
 )
 
