@@ -191,8 +191,8 @@ exports.find_user = async function (req,res,next) {
   let username = req.body.username
   let email = req.body.email
   try{
-    const findUser = await User.findOne({username:username})
-    const findEmail = await User.findOne({email:email})
+    const findUser = await User.findOne({username:{$regex:username,$options: 'i'}})
+    const findEmail = await User.findOne({email:{$regex:email,$options: 'i'}})
 
     if(findUser||findEmail){
       findUser?res.json({usernameError:'Username already exists'}):res.json({emailError:'Email already exists'})
