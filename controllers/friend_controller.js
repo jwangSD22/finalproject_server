@@ -170,3 +170,21 @@ exports.handle_pending_action = async function (req, res, next) {
 
   res.status(200).json('Request handled successfully');
 };
+
+
+//POST custom API for seeding friends
+
+exports.seed_friend = async function (req,res,next){
+  const originUser = await User.findOne({ _id: req.user.jwtid });
+  const endUser = await User.findOne({ _id: req.body.endUserID });
+
+  const newFriend = {
+    friend: endUser._id,
+    status: 'accepted',
+  };
+
+  originUser.friends.push(newFriend);
+  endUser.friends.push({ friend: originUser._id, status: 'accepted' });
+
+
+}

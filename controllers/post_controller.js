@@ -12,6 +12,8 @@ const s3 = require("./s3instance");
 exports.create_post = async function (req, res, next) {
   const { jwtusername, jwtemail, jwtid } = req.user;
 
+  console.log(req)
+
   //find author
   const author = await User.findOne({ username: jwtusername });
 

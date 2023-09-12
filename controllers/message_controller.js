@@ -28,7 +28,7 @@ try{
     post.numberOfComments++
     await post.save()
 
-    res.json(comment)
+    res.json(comment._id)
     
 }
 catch(err){
