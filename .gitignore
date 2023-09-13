@@ -4,6 +4,8 @@
 #client
 /finalproject_client
 
+#temp images for seeding
+/temp_img
 
 #misc
 configure.env

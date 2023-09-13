@@ -5,6 +5,7 @@ const chat_controller = require('../controllers/chat_controller')
 const post_controller = require('../controllers/post_controller')
 const message_controller = require('../controllers/message_controller')
 const friend_controller = require('../controllers/friend_controller')
+const seed_controller = require('../controllers/seed_controller')
 const multer = require('multer')
 
 const storage = multer.memoryStorage();
@@ -182,6 +183,12 @@ router.delete('/comments/:id/delete',verifyToken)
 
 //DELETE message in a chat by MESSAGE ID and update CHAT
 router.delete('/messages/:id/delete',verifyToken)
+
+//<-----------------HELPER ROUTE FOR SEEDING----------------->//
+
+router.get('/seed/randomimg/:parameter',seed_controller.gen_img)
+
+
 
 
 module.exports = router;
