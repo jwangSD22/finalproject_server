@@ -12,7 +12,6 @@ const s3 = require("./s3instance");
 exports.create_post = async function (req, res, next) {
   const { jwtusername, jwtemail, jwtid } = req.user;
 
-  console.log(req)
 
   //find author
   const author = await User.findOne({ username: jwtusername });
@@ -81,7 +80,6 @@ exports.handle_image_upload = async function (req, res, next) {
      res.status(200).json( {s3key});
      //TEMPORARILY NOT ALLOWING MULTIPLE FILE UPLOADS, ONLY TAKE FIRST ARRAY ELEMENT
   } catch (err) {
-    console.log('triggered here')
     console.error(err);
     res.status(500).json({ error: "Error uploading post photo" });
   }

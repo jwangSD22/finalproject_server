@@ -16,8 +16,18 @@ exports.gen_img = async function (req,res,next){
     let parameter = req.params.parameter
     let size = {}
 
-    if(parameter==='post-photos'||parameter==='profile-photos'){
-        size = {width:500,height:500}
+    if(parameter==='post-photos'){
+
+      let random = [{width:600,height:450},{height:955,width:500},{height:500,width:500}]
+
+       size = random[Math.floor(Math.random()*3)]  
+
+
+
+    }
+
+    else if(parameter==='profile-photos'){
+      size = {width:200,height:200}
     }
     else{
         size = {width:1280}
@@ -79,11 +89,22 @@ async function downloadImageAndUploadToS3(url,parameter) {
         })
         .promise();
   
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error(`Error deleting the file: ${err}`);
+          } else {
+            console.log(`File ${filePath} has been deleted.`);
+          }
+        });
+
       // Return the S3 object key
       return objectKey;
     } catch (error) {
       console.error('Error downloading image and uploading to S3:', error);
       throw error;
     }
+
+    
+
   }
   

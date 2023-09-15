@@ -183,6 +183,8 @@ exports.seed_friend = async function (req,res,next){
     status: 'accepted',
   };
 
+
+
   originUser.friends.push(newFriend);
   endUser.friends.push({ friend: originUser._id, status: 'accepted' });
 

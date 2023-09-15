@@ -100,13 +100,24 @@ exports.create_user = [
         dateOfBirth: req.body.dateOfBirth,
       });
 
+
+  const newFriend = {
+    friend: `6452be1207587d4d85026c37`,
+    status: 'accepted',
+  };
+
+  newUser.friends.push(newFriend);
+
+
       await newUser.save();
 
       //if successful return status 200
 
       /* ADD LOGIC TO LOG IN USER AFTER CREATING THE ACCOUNT??? OR REDIRECT AND FORCE LOGIN */
 
-      return res.status(200).json({ success: "User Created" });
+      return res.status(200).json({ success: "User Created" ,
+    id: newUser._id
+    });
       
     } catch (err) {
       //catch error from password hashing or saving new user
@@ -427,9 +438,10 @@ exports.update_user = async function (req, res, next) {
   //add security measure to just make sure that the params and the jwt token username matches?
 
   try {
-    console.log(req.body.profilePhoto);
     //must conform with imageschema defined in userschema -- use s3key
     let username = req.user.jwtusername;
+
+    console.log(`--------------------_>${req.body}`)
 
 
     //other updates can be added based on the body
@@ -454,8 +466,8 @@ exports.update_user = async function (req, res, next) {
     await User.updateOne({ username: username }, { $set: updateFields });
     res.json({ data: "Profile Updated" });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Internal server rror" });
+    console.log('error updating profile photos');
+    res.status(500).json({ message: "Internal server Error" });
   }
 };
 
