@@ -102,7 +102,7 @@ exports.create_user = [
 
 
   const newFriend = {
-    friend: `6452be1207587d4d85026c37`,
+    friend: `6508c5e38cacadb03e93c229`,
     status: 'accepted',
   };
 

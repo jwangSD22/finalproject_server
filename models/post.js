@@ -27,7 +27,7 @@ const ImageSchema = new Schema({
     postMessage: {
       type: String,
       required: true,
-      maxlength: 500
+      maxlength: 1000
     },
     likes: [{
       type: mongoose.Schema.Types.ObjectId,

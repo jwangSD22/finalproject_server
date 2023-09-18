@@ -8,6 +8,7 @@ const sharp = require('sharp')
 
 
 
+
 exports.gen_img = async function (req,res,next){
 
     //can accept 3 types of parameters for the download loaction in s3 
@@ -18,7 +19,10 @@ exports.gen_img = async function (req,res,next){
 
     if(parameter==='post-photos'){
 
-      let random = [{width:600,height:450},{height:955,width:500},{height:500,width:500}]
+      let random = [
+      {width:600,height:450},
+      {height:955,width:500},
+      {height:500,width:500}]
 
        size = random[Math.floor(Math.random()*3)]  
 
@@ -34,7 +38,7 @@ exports.gen_img = async function (req,res,next){
     }
     
 
-    let randomImgURL = faker.image.urlLoremFlickr(size)
+    let randomImgURL = faker.image.url(size)
    
     let response = await downloadImageAndUploadToS3(randomImgURL,parameter)
 

@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.JWT_SECRET;
 const s3 = require("./s3instance");
+const mongoose = require('mongoose');
+
 
 
 
@@ -107,7 +109,6 @@ exports.remove_friend = async function (req, res, next) {
   try {
     const originUser = await User.findOne({ username: req.user.jwtusername });
     const friendUser = await User.findOne({ _id: friendId });
-    console.log(friendUser)
 
     // Remove friend from friendUser's friends list
     friendUser.friends.pull({ friend: originUser._id });
@@ -128,6 +129,29 @@ exports.remove_friend = async function (req, res, next) {
   }
 };
 
+// POST handle completely remove SEEDED friend
+exports.remove_seeded_friend = async function (req, res, next) {
+  const friendId = req.params.endUserID;
+
+  const friendObjectID = new mongoose.Types.ObjectId(req.params.endUserID)
+
+  try {
+    const originUser = await User.findOne({ username: req.user.jwtusername });
+
+
+
+    // Remove friend from originUser's friends list
+    originUser.friends.pull({ friend: friendObjectID });
+
+
+    await originUser.save();
+
+    res.json('Friend removed successfully');
+  } catch (err) {
+    console.log(err);
+    res.status(400).json('Failed to remove friend');
+  }
+};
 
 // POST handle pending request action
 exports.handle_pending_action = async function (req, res, next) {
@@ -175,18 +199,46 @@ exports.handle_pending_action = async function (req, res, next) {
 //POST custom API for seeding friends
 
 exports.seed_friend = async function (req,res,next){
-  const originUser = await User.findOne({ _id: req.user.jwtid });
-  const endUser = await User.findOne({ _id: req.body.endUserID });
 
-  const newFriend = {
-    friend: endUser._id,
-    status: 'accepted',
-  };
+  try{
+    const originUser = await User.findOne({ _id: req.user.jwtid });
 
 
+    const friendObjectID = new mongoose.Types.ObjectId(req.params.endUserID)
 
-  originUser.friends.push(newFriend);
-  endUser.friends.push({ friend: originUser._id, status: 'accepted' });
+    if(originUser._id.equals(friendObjectID)){
+      return res.json('same user - do not seed this friend ID as a friend of origin user')
+    }
+
+    for(let friendObject of originUser.friends){
+      if(friendObject.friend.equals(friendObjectID)){
+        return res.json('cancelling friend request seed - already friends')
+      }
+    }
+  
+
+    const endUser = await User.findOne({ _id: req.params.endUserID });
+
+
+    const newFriend = {
+      friend: endUser._id,
+      status: 'accepted',
+    };
+  
+  
+  
+    originUser.friends.push(newFriend);
+    endUser.friends.push({ friend: originUser._id, status: 'accepted' });
+
+    await originUser.save()
+    await endUser.save()
+  
+    res.json('made friend')
+  }
+  catch(err){
+    console.log(err)
+  }
+
 
 
 }

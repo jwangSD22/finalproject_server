@@ -101,13 +101,16 @@ router.post('/user/removefriendrequest',verifyToken,friend_controller.remove_fri
 
 router.post('/user/removefriend',verifyToken,friend_controller.remove_friend)
 
+router.post('/user/removeseeded/:endUserID',verifyToken,friend_controller.remove_seeded_friend)
+
+
 
 // POST handle pending request action
 router.post('/user/handlerequest',verifyToken,friend_controller.handle_pending_action )
 
 // POST custom api route for seeding friends
 
-router.post('/user/seedfriend',verifyToken,friend_controller.seed_friend)
+router.post('/user/seedfriend/:endUserID',verifyToken,friend_controller.seed_friend)
 
 
 //<-----------------POST ROUTES----------------->//
