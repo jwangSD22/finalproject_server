@@ -100,17 +100,24 @@ exports.create_user = [
         dateOfBirth: req.body.dateOfBirth,
       });
 
+      const newUserInfo = {
+        friend:newUser._id.toString(),
+        status:'accepted'
+      }
 
-  const newFriend = {
-    friend: `6508c5e38cacadb03e93c229`,
-    status: 'accepted',
-  };
+      const newFriend = {
+        friend: `6508c5e38cacadb03e93c229`,
+        status: 'accepted',
+      };
+    
 
-  newUser.friends.push(newFriend);
-
+      const originUser = await User.findOne({ username:'monster' });
+      
+      originUser.friends.push(newUserInfo)
+      newUser.friends.push(newFriend);
 
       await newUser.save();
-
+      await originUser.save()
       //if successful return status 200
 
       /* ADD LOGIC TO LOG IN USER AFTER CREATING THE ACCOUNT??? OR REDIRECT AND FORCE LOGIN */
