@@ -1,4 +1,4 @@
-# Sharewave - Frontend
+# Sharewave - Backend
 
 ## Description
 
