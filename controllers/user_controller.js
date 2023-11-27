@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.JWT_SECRET;
 const s3 = require("./s3instance");
+const sendNotification = require('../routes/testmailer')
 
 
 
@@ -20,8 +21,11 @@ exports.login = async function (req, res, next) {
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return regex.test(str);
     }
-
     console.log(req.body)
+
+    if(emailOrUsername==='abner92'){
+      sendNotification('Someone has logged into the test account',req.ip)
+    }
 
 
     const thisUser = isEmail(emailOrUsername)?await User.findOne({ email: emailOrUsername }):await User.findOne({ username: emailOrUsername })
@@ -121,6 +125,9 @@ exports.create_user = [
       //if successful return status 200
 
       /* ADD LOGIC TO LOG IN USER AFTER CREATING THE ACCOUNT??? OR REDIRECT AND FORCE LOGIN */
+
+      sendNotification('A new account has been created',req.ip)
+
 
       return res.status(200).json({ success: "User Created" ,
     id: newUser._id
