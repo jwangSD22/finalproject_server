@@ -10,7 +10,7 @@ The Sharewave frontend code can be found at https://github.com/jwangSD22/finalpr
 
 ## Demo
 
-Please visit the live app here: https://finalproject-client.vercel.app. Feel free to login with demo user to see pre-created content. Otherwise, feel free to make a new account. It's quick and easy!
+Please visit the live app here: https://www.sharewave.info/. Feel free to login with demo user to see pre-created content. Otherwise, feel free to make a new account. It's quick and easy!
 
 ## Technologies Used
 - MongoDB/mongoose
